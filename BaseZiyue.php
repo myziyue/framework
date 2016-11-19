@@ -8,8 +8,11 @@
  */
 namespace zy;
 
+// 框架加载开始时间
 defined('ZY_BEGIN_TIME') or define('ZY_BEGIN_TIME', microtime(true));
+// 框架根目录
 defined('ZY_PATH') or define('ZY_PATH', __DIR__);
+// 是否开启框架Debug模式
 defined('ZY_DEBUG') or define('ZY_DEBUG', false);
 
 class BaseZiyue
@@ -17,28 +20,47 @@ class BaseZiyue
     /**
      * @var string 版本
      */
-    private static $version = 'Version 0.1 beta';
+    private static $version = '0.1';
     /**
      * @var null 框架入口对象
      */
-    private static $app = null;
+    public static $app = null;
     /**
      * @var array 类映射地图
      */
-    private static $classMap = [];
+    public static $classMap = [];
     /**
      * @var
      */
-    private static $container;
+    public static $container;
 
     public static function run()
     {
         return "OK";
     }
 
-    public static function autoload($class)
+    public static function autoload($className)
     {
+        if (isset(static::$classMap[$className])) {
+            $classFile = static::$classMap[$className];
+        } elseif (strpos($className, '\\') !== false) {
+            $classFile = str_replace('\\', '/', $className) . '.php';
+            if ($classFile === false || !is_file($classFile)) {
+                return;
+            }
+        } else {
+            return;
+        }
 
+        include($classFile);
+
+//        if (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
+//            throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
+//        }
+    }
+
+    public static function t($message, $params = [], $category = 'app', $language = 'US_en')
+    {
     }
 
     public static function version()
@@ -71,19 +93,16 @@ class BaseZiyue
 
     }
 
-    public static function p($data){
-        if(is_bool($data)){
+    public static function p($data)
+    {
+        if (is_bool($data)) {
             var_dump($data);
-        } elseif (is_null($data)){
+        } elseif (is_null($data)) {
             var_dump($data);
         } else {
             echo "<pre style='position: relative;z-index: 100%; padding: 10px;border-radius: 5px;background: #F5F5F5; border: 1px solid #AAA;font-size:14px;line-height: 18px; opacity: 0.9;'>"
                 . print_r($data, true) . "</pre>";
         }
-    }
-
-    public static function t($message, $params = [], $category = 'app', $language = 'US_en')
-    {
     }
 
 }
