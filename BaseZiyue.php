@@ -30,7 +30,7 @@ class BaseZiyue
      */
     public static $classMap = [];
     /**
-     * @var
+     * @var 容器对象
      */
     public static $container;
 
@@ -39,6 +39,10 @@ class BaseZiyue
         return "OK";
     }
 
+    /**
+     * 自动加载
+     * @param $className
+     */
     public static function autoload($className)
     {
         if (isset(static::$classMap[$className])) {
@@ -59,18 +63,39 @@ class BaseZiyue
 //        }
     }
 
+    /**
+     * 翻译提示信息
+     * @param $message
+     * @param array $params
+     * @param string $category
+     * @param string $language
+     * @return mixed
+     */
     public static function t($message, $params = [], $category = 'app', $language = 'US_en')
     {
+        foreach($params as $key => $value){
+            $message = str_replace('{' . $key .'}', $value, $message);
+        }
+        return $message;
     }
 
+    /**
+     * 版本信息
+     * @return string
+     */
     public static function version()
     {
         return self::$version;
     }
 
+    /**
+     * 技术支持信息
+     * @return mixed
+     */
     public static function powered()
     {
-
+        return \Ziyue::t('Powered by {ziyue}',
+            ['ziyue' => '<a href="http://framework.myziyue.com/" rel="external">Ziyue Framework</a>']);
     }
 
     public static function error()
@@ -93,6 +118,10 @@ class BaseZiyue
 
     }
 
+    /**
+     * 打印调试信息
+     * @param $data
+     */
     public static function p($data)
     {
         if (is_bool($data)) {
