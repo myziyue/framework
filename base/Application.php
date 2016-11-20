@@ -31,8 +31,6 @@ class Application extends Component
         // 注册异常错误处理句柄
         $this->getErrorHandler()->register();
 
-        throw new InvalidParamException("无效参数");
-
     }
 
 

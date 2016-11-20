@@ -44,7 +44,6 @@ class ErrorHandler extends Component
 
     public function handleException($exception)
     {
-        var_dump('test');
         if ($exception instanceof ExitException) {
             return;
         }
