@@ -8,12 +8,15 @@
  */
 namespace zy;
 
+use zy\exception\UnknownClassException;
+
 // 框架加载开始时间
 defined('ZY_BEGIN_TIME') or define('ZY_BEGIN_TIME', microtime(true));
 // 框架根目录
 defined('ZY_PATH') or define('ZY_PATH', __DIR__);
 // 是否开启框架Debug模式
 defined('ZY_DEBUG') or define('ZY_DEBUG', false);
+defined('ZY_ENV_TEST') or define('ZY_ENV_TEST', 'test');
 
 class BaseZiyue
 {
@@ -58,9 +61,9 @@ class BaseZiyue
 
         include($classFile);
 
-//        if (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
-//            throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
-//        }
+        if (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
+            throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
+        }
     }
 
     /**
@@ -95,7 +98,7 @@ class BaseZiyue
     public static function powered()
     {
         return \Ziyue::t('Powered by {ziyue}',
-            ['ziyue' => '<a href="http://framework.myziyue.com/" rel="external">Ziyue Framework</a>']);
+            ['ziyue' => '<a href="http://framework.myziyue.com/" rel="external">MyZiyue Framework</a>']);
     }
 
     public static function error()
