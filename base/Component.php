@@ -17,6 +17,11 @@ class Component
 
     public function __get($name)
     {
-        // TODO: Implement __get() method.
+        $getter = 'get' . ucfirst($name);
+        if(function_exists($getter)){
+            return $this->$getter;
+        } else {
+            return
+        }
     }
 }

@@ -9,6 +9,7 @@
 namespace zy;
 
 use zy\exception\UnknownClassException;
+use zy\exception\InvalidConfigException;
 
 // 框架加载开始时间
 defined('ZY_BEGIN_TIME') or define('ZY_BEGIN_TIME', microtime(true));
@@ -66,6 +67,22 @@ class BaseZiyue
         }
     }
 
+    public function createObject($type, $params = [])
+    {
+        if (is_string($type)) {
+            return static::$container->get($type, $params);
+        } elseif (is_array($type) && isset($type['class'])) {
+            $class = $type['class'];
+            unset($type['class']);
+            return static::$container->get($class, $params, $type);
+        } elseif (is_array($type)) {
+            throw new InvalidConfigException('Object configuration must be an array containing a "class" element.');
+        } else {
+            throw new InvalidConfigException('Unsupported configuration type: ' . gettype($type));
+        }
+
+    }
+
     /**
      * 翻译提示信息
      * @param $message
@@ -76,8 +93,8 @@ class BaseZiyue
      */
     public static function t($message, $params = [], $category = 'app', $language = 'US_en')
     {
-        foreach($params as $key => $value){
-            $message = str_replace('{' . $key .'}', $value, $message);
+        foreach ($params as $key => $value) {
+            $message = str_replace('{' . $key . '}', $value, $message);
         }
         return $message;
     }

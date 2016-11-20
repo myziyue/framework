@@ -14,3 +14,4 @@ class Ziyue extends \zy\BaseZiyue
 
 spl_autoload_register(['Ziyue', 'autoload'], true, true);
 Ziyue::$classMap = require(__DIR__ . '/classmap.php');
+Ziyue::$container = new \zy\di\Container();

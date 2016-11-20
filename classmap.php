@@ -14,6 +14,8 @@ return [
     'zy\base\Exception' => ZY_PATH . '/base/Exception.php',
     'zy\base\ErrorHandler' => ZY_PATH . '/base/ErrorHandler.php',
     'zy\base\Component' => ZY_PATH . '/base/Component.php',
+    // di
+    'zy\di\Container' => ZY_PATH . '/di/Container.php',
     // exception
     'zy\exception\InvalidCallException' => ZY_PATH . '/exception/InvalidCallException.php',
     'zy\exception\InvalidConfigException' => ZY_PATH . '/exception/InvalidConfigException.php',
