@@ -13,9 +13,10 @@ namespace zy\base;
 
 use Ziyue;
 use zy\base\Component;
+use zy\di\ServiceLocator;
 use zy\exception\InvalidParamException;
 
-class Application extends Component
+class Application extends ServiceLocator
 {
     public $version = '1.0';
     public $name = 'My Ziyue Application';
@@ -29,7 +30,7 @@ class Application extends Component
         // 系统初始化
         $this->init();
         // 注册异常错误处理句柄
-        $this->getErrorHandler()->register();
+        $this->registerErrorHandler();
 
     }
 
@@ -41,15 +42,24 @@ class Application extends Component
 
     public function getErrorHandler()
     {
-        if(isset($this->coreComponent['errorHandler'])){
-            return Ziyue::createObject($this->coreComponent['errorHandler']);
-        }
-        return false;
+        return $this->get('errorHandler');
     }
 
     public function coreComponent(){
         return [
           'errorHandler' => ['class' => 'zy\base\ErrorHandler'],
         ];
+    }
+
+    protected function registerErrorHandler()
+    {
+        if (ZY_ENABLE_ERROR_HANDLER) {
+            if (!isset($this->coreComponent['errorHandler']['class'])) {
+                echo "Error: no errorHandler component is configured.\n";
+                exit(1);
+            }
+            $this->set('errorHandler', $this->coreComponent['errorHandler']);
+            $this->getErrorHandler()->register();
+        }
     }
 }

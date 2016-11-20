@@ -16,6 +16,7 @@ return [
     'zy\base\Component' => ZY_PATH . '/base/Component.php',
     // di
     'zy\di\Container' => ZY_PATH . '/di/Container.php',
+    'zy\di\ServiceLocator' => ZY_PATH . '/di/ServiceLocator.php',
     // exception
     'zy\exception\InvalidCallException' => ZY_PATH . '/exception/InvalidCallException.php',
     'zy\exception\InvalidConfigException' => ZY_PATH . '/exception/InvalidConfigException.php',

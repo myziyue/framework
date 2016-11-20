@@ -10,6 +10,7 @@
 namespace zy\di;
 
 use zy\base\Component;
+use zy\exception\InvalidConfigException;
 
 class ServiceLocator extends Component
 {
@@ -94,7 +95,7 @@ class ServiceLocator extends Component
             if (is_object($definition) && !$definition instanceof Closure) {
                 return $this->_components[$id] = $definition;
             } else {
-                return $this->_components[$id] = Yii::createObject($definition);
+                return $this->_components[$id] = \Ziyue::createObject($definition);
             }
         } elseif ($throwException) {
             throw new InvalidConfigException("Unknown component ID: $id");

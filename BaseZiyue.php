@@ -18,6 +18,7 @@ defined('ZY_PATH') or define('ZY_PATH', __DIR__);
 // 是否开启框架Debug模式
 defined('ZY_DEBUG') or define('ZY_DEBUG', false);
 defined('ZY_ENV_TEST') or define('ZY_ENV_TEST', 'test');
+defined('ZY_ENABLE_ERROR_HANDLER') or define('ZY_ENABLE_ERROR_HANDLER', true);
 
 class BaseZiyue
 {
