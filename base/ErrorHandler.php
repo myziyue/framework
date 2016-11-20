@@ -11,6 +11,7 @@ namespace zy\base;
 
 use \Ziyue;
 use zy\exception\ExitException;
+use zy\web\HttpException;
 
 class ErrorHandler extends Component
 {
@@ -22,7 +23,7 @@ class ErrorHandler extends Component
 
     public function register()
     {
-        ini_set('display_errors', false);
+        ini_set('display_errors', true);
         set_exception_handler([$this, 'handleException']);
         if (defined('HHVM_VERSION')) {
             set_error_handler([$this, 'handleHhvmError']);
@@ -43,6 +44,7 @@ class ErrorHandler extends Component
 
     public function handleException($exception)
     {
+        var_dump('test');
         if ($exception instanceof ExitException) {
             return;
         }
@@ -99,6 +101,59 @@ class ErrorHandler extends Component
 
     public function handleFatalError()
     {
+
+    }
+
+    public function handleError($code, $message, $file, $line)
+    {
+        if (error_reporting() & $code) {
+            // load ErrorException manually here because autoloading them will not work
+            // when error occurs while autoloading a class
+            if (!class_exists('yii\\base\\ErrorException', false)) {
+                require_once(__DIR__ . '/ErrorException.php');
+            }
+            $exception = new ErrorException($message, $code, $code, $file, $line);
+
+            // in case error appeared in __toString method we can't throw any exception
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            array_shift($trace);
+            foreach ($trace as $frame) {
+                if ($frame['function'] === '__toString') {
+                    $this->handleException($exception);
+                    if (defined('HHVM_VERSION')) {
+                        flush();
+                    }
+                    exit(1);
+                }
+            }
+
+            throw $exception;
+        }
+        return false;
+    }
+
+    public function logException($exception)
+    {
+        $category = get_class($exception);
+        if ($exception instanceof HttpException) {
+            $category = 'zy\\web\\HttpException:' . $exception->statusCode;
+        } elseif ($exception instanceof \ErrorException) {
+            $category .= ':' . $exception->getSeverity();
+        }
+        Ziyue::error($exception, $category);
+    }
+
+    public function clearOutput()
+    {
+        // the following manual level counting is to deal with zlib.output_compression set to On
+        for ($level = ob_get_level(); $level > 0; --$level) {
+            if (!@ob_end_clean()) {
+                ob_clean();
+            }
+        }
+    }
+
+    protected function renderException($exception){
 
     }
 }

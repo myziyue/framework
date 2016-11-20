@@ -67,7 +67,7 @@ class BaseZiyue
         }
     }
 
-    public function createObject($type, $params = [])
+    public static function createObject($type, $params = [])
     {
         if (is_string($type)) {
             return static::$container->get($type, $params);

@@ -21,7 +21,7 @@ class Component
         if(function_exists($getter)){
             return $this->$getter;
         } else {
-            return
+            return \Ziyue::createObject($name);
         }
     }
 }

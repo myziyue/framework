@@ -13,6 +13,7 @@ namespace zy\base;
 
 use Ziyue;
 use zy\base\Component;
+use zy\exception\InvalidParamException;
 
 class Application extends Component
 {
@@ -20,22 +21,37 @@ class Application extends Component
     public $name = 'My Ziyue Application';
     public $charset = 'UTF-8';
     public $language = 'en_US';
+    private $coreComponent = [];
 
     public function __construct()
     {
         Ziyue::$app = $this;
-
+        // 系统初始化
+        $this->init();
+        // 注册异常错误处理句柄
         $this->getErrorHandler()->register();
+
+        throw new InvalidParamException("无效参数");
 
     }
 
 
     public function init(){
-
+        // 映射系统核心组件类
+        $this->coreComponent = $this->coreComponent();
     }
 
     public function getErrorHandler()
     {
-        return $this->get('errorHandler');
+        if(isset($this->coreComponent['errorHandler'])){
+            return Ziyue::createObject($this->coreComponent['errorHandler']);
+        }
+        return false;
+    }
+
+    public function coreComponent(){
+        return [
+          'errorHandler' => ['class' => 'zy\base\ErrorHandler'],
+        ];
     }
 }
