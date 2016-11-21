@@ -12,5 +12,9 @@ namespace zy\base;
 
 class Logger
 {
+    public $version = '1.0';
 
+    public function version(){
+        return $this->version;
+    }
 }

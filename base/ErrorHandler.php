@@ -9,7 +9,7 @@
 
 namespace zy\base;
 
-use \Ziyue;
+use Zy;
 use zy\exception\ExitException;
 use zy\web\HttpException;
 
@@ -139,7 +139,7 @@ class ErrorHandler extends Component
         } elseif ($exception instanceof \ErrorException) {
             $category .= ':' . $exception->getSeverity();
         }
-        Ziyue::error($exception, $category);
+        Zy::error($exception, $category);
     }
 
     public function clearOutput()

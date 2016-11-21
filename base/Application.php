@@ -28,6 +28,8 @@ class Application extends ServiceLocator
     public $logPath = '';
     public $cachePath = '';
     public $components = [];
+    public $bootstrap = [];
+    public $logger = '';
 
     public function __construct($config = [])
     {
@@ -52,8 +54,8 @@ class Application extends ServiceLocator
     public function run()
     {
         try {
-            Zy::$container->set("logger", $this->coreComponent['logger']);
-            Zy::createObject("logger");
+            $this->bootstrap();
+
         } catch (\Exception $ex) {
             Zy::p($ex);
         }
@@ -108,6 +110,19 @@ class Application extends ServiceLocator
             throw new InvalidConfigException("The 'components' configuration for the Application is required.");
         }
 
+    }
+
+    protected function bootstrap(){
+        if(!$this->bootstrap){
+            return ;
+        }
+        if(!is_array($this->bootstrap)){
+            throw new InvalidConfigException("The 'bootstrap' configuration vaild.");
+        }
+        foreach($this->bootstrap as $component){
+            Zy::$container->set($component, $this->coreComponent[$component]);
+            $this->$component = Zy::createObject($component);
+        }
     }
 
     public function getErrorHandler()

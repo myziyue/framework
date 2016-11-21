@@ -167,6 +167,8 @@ class BaseZiyue
 
     public static function configure($object, $properties)
     {
+        error_reporting(-1);
+        ini_set('display_errors','on');
         foreach ($properties as $name => $value) {
             $object->$name = $value;
         }
