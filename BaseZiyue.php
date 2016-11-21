@@ -18,6 +18,9 @@ defined('ZY_PATH') or define('ZY_PATH', __DIR__);
 // 是否开启框架Debug模式
 defined('ZY_DEBUG') or define('ZY_DEBUG', false);
 defined('ZY_ENV_TEST') or define('ZY_ENV_TEST', 'test');
+defined('ZY_ENV_DEV') or define('ZY_ENV_DEV', 'dev');
+defined('ZY_ENV_PROD') or define('ZY_ENV_PROD', 'prod');
+
 defined('ZY_ENABLE_ERROR_HANDLER') or define('ZY_ENABLE_ERROR_HANDLER', true);
 
 class BaseZiyue
@@ -68,6 +71,13 @@ class BaseZiyue
         }
     }
 
+    /**
+     * 创建对象
+     * @param $type
+     * @param array $params
+     * @return mixed
+     * @throws InvalidConfigException
+     */
     public static function createObject($type, $params = [])
     {
         if (is_string($type)) {
@@ -115,7 +125,7 @@ class BaseZiyue
      */
     public static function powered()
     {
-        return \Ziyue::t('Powered by {ziyue}',
+        return \Zy::t('Powered by {ziyue}',
             ['ziyue' => '<a href="http://framework.myziyue.com/" rel="external">MyZiyue Framework</a>']);
     }
 
@@ -153,6 +163,15 @@ class BaseZiyue
             echo "<pre style='position: relative;z-index: 100%; padding: 10px;border-radius: 5px;background: #F5F5F5; border: 1px solid #AAA;font-size:14px;line-height: 18px; opacity: 0.9;'>"
                 . print_r($data, true) . "</pre>";
         }
+    }
+
+    public static function configure($object, $properties)
+    {
+        foreach ($properties as $name => $value) {
+            $object->$name = $value;
+        }
+
+        return $object;
     }
 
 }

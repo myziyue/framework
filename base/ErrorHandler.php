@@ -66,7 +66,7 @@ class ErrorHandler extends Component
             }
             $this->renderException($exception);
             if (!ZY_ENV_TEST) {
-                \Ziyue::getLogger()->flush(true);
+                \Zy::getLogger()->flush(true);
                 if (defined('HHVM_VERSION')) {
                     flush();
                 }
@@ -82,12 +82,12 @@ class ErrorHandler extends Component
                 if (PHP_SAPI === 'cli') {
                     echo $msg . "\n";
                 } else {
-                    echo '<pre>' . htmlspecialchars($msg, ENT_QUOTES, \Ziyue::$app->charset) . '</pre>';
+                    echo '<pre>' . htmlspecialchars($msg, ENT_QUOTES, \Zy::$app->charset) . '</pre>';
                 }
             } else {
                 echo 'An internal server error occurred.';
             }
-            $msg .= "\n\$_SERVER = " . \Ziyue::p($_SERVER);
+            $msg .= "\n\$_SERVER = " . \Zy::p($_SERVER);
             error_log($msg);
             if (defined('HHVM_VERSION')) {
                 flush();

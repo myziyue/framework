@@ -9,8 +9,14 @@
 
 namespace zy\base;
 
+use Zy;
+use zy\di\ServiceLocator;
 
-class Config
+class Config extends ServiceLocator
 {
-
+    private $defaultConfigName = 'main.php';
+    public function init()
+    {
+        Zy::$app->getAppPath() . DIRECTORY_SEPARATOR  . 'config' . DIRECTORY_SEPARATOR . $this->defaultConfigName;
+    }
 }

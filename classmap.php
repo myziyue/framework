@@ -11,9 +11,11 @@ return [
     // BASE
     'zy\base\Application' => ZY_PATH . '/base/Application.php',
     'zy\base\Controller' => ZY_PATH . '/base/Controller.php',
+    'zy\base\Config' => ZY_PATH . '/base/Config.php',
     'zy\base\Exception' => ZY_PATH . '/base/Exception.php',
     'zy\base\ErrorHandler' => ZY_PATH . '/base/ErrorHandler.php',
     'zy\base\Component' => ZY_PATH . '/base/Component.php',
+    'zy\base\Logger' => ZY_PATH . '/base/Logger.php',
     // di
     'zy\di\Container' => ZY_PATH . '/di/Container.php',
     'zy\di\ServiceLocator' => ZY_PATH . '/di/ServiceLocator.php',
