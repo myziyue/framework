@@ -52,7 +52,8 @@ class Application extends ServiceLocator
     public function run()
     {
         try {
-            Zy::createObject("logger", $this->coreComponent['logger']);
+            Zy::$container->set("logger", $this->coreComponent['logger']);
+            Zy::createObject("logger");
         } catch (\Exception $ex) {
             Zy::p($ex);
         }
