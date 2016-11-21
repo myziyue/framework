@@ -13,8 +13,4 @@ namespace zy\web;
 class Application extends \zy\base\Application
 {
     public $defaultController = 'ziyue';
-
-    public function run(){
-        return "Ziyue Web Application";
-    }
 }

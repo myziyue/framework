@@ -8,7 +8,14 @@
  */
 namespace zy\base;
 
+use Zy;
+
 class Object
 {
-
+    public function __construct($config = [])
+    {
+        if (!empty($config)) {
+            Zy::configure($this, $config);
+        }
+    }
 }

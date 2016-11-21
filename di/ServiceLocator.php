@@ -95,7 +95,7 @@ class ServiceLocator extends Component
             if (is_object($definition) && !$definition instanceof Closure) {
                 return $this->_components[$id] = $definition;
             } else {
-                return $this->_components[$id] = \Ziyue::createObject($definition);
+                return $this->_components[$id] = \Zy::createObject($definition);
             }
         } elseif ($throwException) {
             throw new InvalidConfigException("Unknown component ID: $id");
