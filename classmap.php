@@ -15,6 +15,8 @@ return [
     'zy\base\ErrorHandler' => ZY_PATH . '/base/ErrorHandler.php',
     'zy\base\Component' => ZY_PATH . '/base/Component.php',
     'zy\base\Object' => ZY_PATH . '/base/Object.php',
+    //db
+    'zy\db\Connention' => ZY_PATH . '/db/Connention.php',
     // di
     'zy\di\Container' => ZY_PATH . '/di/Container.php',
     'zy\di\ServiceLocator' => ZY_PATH . '/di/ServiceLocator.php',
@@ -27,7 +29,13 @@ return [
     'zy\exception\UnknownClassException' => ZY_PATH . '/exception/UnknownClassException.php',
     'zy\exception\UnknownMethodException' => ZY_PATH . '/exception/UnknownMethodException.php',
     'zy\exception\UnknownPropertyException' => ZY_PATH . '/exception/UnknownPropertyException.php',
+    // helper
+    'zy\helper\Dumper' => ZY_PATH . '/helper/Dumper.php',
+    // log
+    'zy\log\Logger' => ZY_PATH . '/log/Logger.php',
+    'zy\log\driver\FileLogger' => ZY_PATH . '/log/driver/FileLogger.php',
     // WEB
     'zy\web\Application' => ZY_PATH . '/web/Application.php',
     'zy\web\ErrorAction' => ZY_PATH . '/web/ErrorAction.php',
+    'zy\web\ErrorHandler' => ZY_PATH . '/web/ErrorHandler.php',
 ];

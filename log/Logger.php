@@ -10,6 +10,7 @@
 namespace zy\log;
 
 use zy\base\Component;
+use zy\log\driver\FileLogger;
 
 class Logger extends Component
 {
@@ -25,13 +26,22 @@ class Logger extends Component
     const LEVEL_PROFILE = 0x40;
     const LEVEL_PROFILE_BEGIN = 0x50;
     const LEVEL_PROFILE_END = 0x60;
+    public static $instrance = null;
 
-    public $driver = self::TYPE_FILE;
+    public $type = self::TYPE_FILE;
 
 
-    public function __construct()
+    public function instrance()
     {
 
     }
 
+    public function createFactory(){
+        if(self::$instrance == null){
+            $driverClass = '\\zy\\log\\driver\\' . $this->type . 'Logger';
+            self::$instrance = new $driverClass;
+            self::setInstance(self::$instrance);
+        }
+        return self::$instrance;
+    }
 }

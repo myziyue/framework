@@ -23,9 +23,9 @@ class Object
     public function __get($name)
     {
         $getter = 'get' . ucfirst($name);
-        if (method_exists($getter)) {
+        if (method_exists($this, $getter)) {
             return $this->$getter();
-        } elseif (method_exists('set' . ucfirst($name))) {
+        } elseif (method_exists($this, 'set' . ucfirst($name))) {
             throw new InvalidCallException('Getting write-only property: ' . get_class($this) . '::' . $name);
         } else {
             throw new UnknownPropertyException('Getting unknown property: ' . get_class($this) . '::' . $name);

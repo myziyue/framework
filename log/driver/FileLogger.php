@@ -10,18 +10,21 @@
 namespace zy\log\driver;
 
 use Zy;
+use zy\base\Object;
 use zy\log\Logger;
 
-class FileLogger
+class FileLogger extends Object
 {
     public function log($message, $level = Logger::LEVEL_INFO, $category = 'application')
     {
-        $ts = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        array_pop($ts); // remove the last trace since it would be the entry script, not very useful
-        Zy::p($ts);
-        $message = date("Y-m-d H:i:s") . '[][' . $level . '][]' . $message;
-        $fileName = $category . '-' . date('Y-m-d') . '_' . time() . '.log';
-        $filePath = Zy::$app->getRuntimePath() . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . $fileName;
-        file_put_contents($filePath, $message, FILE_APPEND);
+        ini_set('display_errors', true);
+        $message = date("Y-m-d H:i:s") . '[][' . $level . '][' . $category . '] ' . $message . "\n\r";
+        $fileName = 'app-' . date('Ymd') . '.log';
+        $filePath = Zy::getAliasPath(Zy::$app->getRuntimePath()) . 'logs' . DIRECTORY_SEPARATOR;
+        if(!file_exists($filePath)){
+            mkdir($filePath, 0755, true);
+        }
+
+        file_put_contents($filePath . $fileName, $message, FILE_APPEND);
     }
 }

@@ -25,6 +25,7 @@ class Application extends ServiceLocator
     public $extensions;
     public $bootstrap = [];
     public $loadedModules = [];
+    public $components = [];
 
     /**
      *
@@ -33,23 +34,17 @@ class Application extends ServiceLocator
      */
     public function __construct($config = [])
     {
-        try {
-            Zy::$app = $this;
-            self::setInstance($this);
+        Zy::$app = $this;
+        self::setInstance($this);
 
-            $this->preInit($config);
+        $this->preInit($config);
 
-            $this->registerErrorHandler($config);
-
-        } catch (Exception $ex) {
-            Zy::p($ex);
-        }
-
+        $this->registerErrorHandler($config);
     }
 
     public function run()
     {
-
+        $this->getDb();
     }
 
     /**
@@ -85,7 +80,7 @@ class Application extends ServiceLocator
         }
 
         foreach ($config['components'] as $id => $component) {
-            $this->loadedModules[$id] = $component;
+            $this->components[$id] = $component;
         }
     }
 
@@ -94,9 +89,29 @@ class Application extends ServiceLocator
         return $this->get('errorHandler');
     }
 
+    protected function getDb()
+    {
+        if(!isset($this->components['db'])){
+            throw new InvalidConfigException("Error: no db component is configured");
+            exit(1);
+        }
+        $this->set('db', $this->components['db']);
+        return $this->get('db');
+    }
+
+    protected function getLogger()
+    {
+        $this->set('logger', $this->components['logger']);
+        return $this->get('logger')->createFactory();
+    }
+
     protected function registerErrorHandler(&$config)
     {
         if (ZY_ENABLE_ERROR_HANDLER) {
+            if (!isset($config['components']['errorHandler']['class'])) {
+                throw new InvalidConfigException("Error: no errorHandler component is configured");
+                exit(1);
+            }
             $this->set('errorHandler', $config['components']['errorHandler']);
             unset($config['components']['errorHandler']);
             $this->getErrorHandler()->register();
@@ -106,7 +121,6 @@ class Application extends ServiceLocator
     protected function getCoreComponents()
     {
         return [
-            'errorHandler' => 'zy\base\ErrorHandler',
             'logger' => 'zy\log\Logger',
         ];
     }
