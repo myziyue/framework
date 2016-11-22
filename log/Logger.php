@@ -29,5 +29,9 @@ class Logger extends Component
     public $driver = self::TYPE_FILE;
 
 
+    public function __construct()
+    {
+
+    }
 
 }
