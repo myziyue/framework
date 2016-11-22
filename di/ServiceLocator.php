@@ -9,6 +9,8 @@
 
 namespace zy\di;
 
+use Zy;
+use Closure;
 use zy\base\Component;
 use zy\exception\InvalidConfigException;
 
