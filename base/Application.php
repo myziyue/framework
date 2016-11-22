@@ -22,30 +22,26 @@ class Application extends ServiceLocator
     public $name = 'My Ziyue Application';
     public $charset = 'UTF-8';
     public $language = 'en_US';
-    private $coreComponent = [];
-    public $loadedModules = [];
-    public $appPath = '';
-    public $logPath = '';
-    public $cachePath = '';
-    public $components = [];
+    public $extensions;
     public $bootstrap = [];
-    public $logger = '';
+    public $loadedModules = [];
 
+    /**
+     *
+     * Application constructor.
+     * @param array $config
+     */
     public function __construct($config = [])
     {
-        try{
+        try {
             Zy::$app = $this;
-            // 系统初始化
+            self::setInstance($this);
+
             $this->preInit($config);
-            // 配置文件
-            $this->initConfig();
-            // 注册异常错误处理句柄
-            $this->registerErrorHandler();
-            if(!empty($config)){
-                Zy::configure($this, $config);
-            }
-            unset($config);
-        } catch (\Exception $ex){
+
+            $this->registerErrorHandler($config);
+
+        } catch (Exception $ex) {
             Zy::p($ex);
         }
 
@@ -53,155 +49,65 @@ class Application extends ServiceLocator
 
     public function run()
     {
-        try {
-            $this->bootstrap();
 
-        } catch (\Exception $ex) {
-            Zy::p($ex);
-        }
     }
 
     /**
-     * 预初始化
+     * 预处理
      * @param $config
-     * @throws InvalidConfigException
      */
     public function preInit(&$config)
     {
-        // 映射系统核心组件类
-        $this->coreComponent = $this->coreComponent();
-
-        // 设置应用目录
         if (isset($config['appPath'])) {
             $this->setAppPath($config['appPath']);
             unset($config['appPath']);
         } else {
-            throw new InvalidConfigException("The 'basePath' configuration for the Application is required.");
+            throw new InvalidConfigException('The "appPath" configuration for the Application is required.');
         }
-        // 设置日志目录
-        if (isset($config['logPath'])) {
-            $this->setLogPath($config['logPath']);
-            unset($config['logPath']);
-        } else {
-            $this->setLogPath($this->getAppPath() . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR);
-        }
-        // 设置缓存目录
-        if (isset($config['cachePath'])) {
-            $this->setCachePath($config['cachePath']);
-            unset($config['cachePath']);
-        } else {
-            $this->setCachePath($this->getAppPath() . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR);
-        }
-        //设置时区
+
+        $this->getRuntimePath();
+        $this->getViewPath();
+        $this->getLayoutPath();
+
         if (isset($config['timeZone'])) {
             $this->setTimeZone($config['timeZone']);
             unset($config['timeZone']);
         } elseif (!ini_get('date.timezone')) {
             $this->setTimeZone('UTC');
         }
-        //  合并核心组件
-        if (isset($config['components'])) {
-            foreach ($this->coreComponent() as $id => $component) {
-                if(!isset($config['components'][$id])){
-                    $config['components'][$id] = $component;
-                }
+
+        foreach ($this->getCoreComponents() as $id => $component) {
+            if (!isset($config['components'][$id])) {
+                $config['components'][$id] = $component;
+            } elseif (is_array($config['components'][$id]) && !isset($config['components'][$id]['class'])) {
+                $config['components'][$id]['class'] = $component['class'];
             }
-        } else {
-            throw new InvalidConfigException("The 'components' configuration for the Application is required.");
         }
 
-    }
-
-    protected function bootstrap(){
-        if(!$this->bootstrap){
-            return ;
-        }
-        if(!is_array($this->bootstrap)){
-            throw new InvalidConfigException("The 'bootstrap' configuration vaild.");
-        }
-        foreach($this->bootstrap as $component){
-            Zy::$container->set($component, $this->coreComponent[$component]);
-            $this->$component = Zy::createObject($component);
+        foreach ($config['components'] as $id => $component) {
+            $this->loadedModules[$id] = $component;
         }
     }
 
-    public function getErrorHandler()
+    protected function getErrorHandler()
     {
         return $this->get('errorHandler');
     }
 
-    public function coreComponent()
-    {
-        return [
-            'action' => ['class' => 'zy\base\Action'],
-            'cache' => ['class' => 'zy\base\Cache'],
-            'controller' => ['class' => 'zy\base\Controller'],
-            'config' => ['class' => 'zy\base\Config'],
-            'db' => ['class' => 'zy\base\Db'],
-            'errorHandler' => ['class' => 'zy\base\ErrorHandler'],
-            'logger' => ['class' => 'zy\base\Logger'],
-            'route' => ['class' => 'zy\base\Route'],
-        ];
-    }
-
-    protected function registerErrorHandler()
+    protected function registerErrorHandler(&$config)
     {
         if (ZY_ENABLE_ERROR_HANDLER) {
-            if (!isset($this->coreComponent['errorHandler']['class'])) {
-                echo "Error: no errorHandler component is configured.\n";
-                exit(1);
-            }
-            $this->set('errorHandler', $this->coreComponent['errorHandler']);
+            $this->set('errorHandler', $config['components']['errorHandler']);
+            unset($config['components']['errorHandler']);
             $this->getErrorHandler()->register();
         }
     }
 
-    protected function initConfig()
+    protected function getCoreComponents()
     {
-        $this->set('config', $this->coreComponent['config']);
-        $this->get('config')->init();
+        return [
+            'errorHandler' => 'zy\base\ErrorHandler',
+            'logger' => 'zy\log\Logger',
+        ];
     }
-
-    public function getTimeZone()
-    {
-        return date_default_timezone_get();
-    }
-
-    public function setTimeZone($value)
-    {
-        date_default_timezone_set($value);
-    }
-
-    public function setAppPath($appPath){
-        if(file_exists($appPath)){
-            $this->appPath = $appPath;
-        } else {
-            throw new InvalidParamException("The directory does not exist: $appPath");
-        }
-    }
-    public function getAppPath(){
-        return $this->appPath;
-    }
-    public function setLogPath($logPath){
-        if(file_exists($logPath)){
-            $this->logPath = $logPath;
-        } else {
-            throw new InvalidParamException("The directory does not exist: $logPath");
-        }
-    }
-    public function getLogPath(){
-        return $this->logPath;
-    }
-    public function setCachePath($cachePath){
-        if(file_exists($cachePath)){
-            $this->cachePath = $cachePath;
-        } else {
-            throw new InvalidParamException("The directory does not exist: $cachePath");
-        }
-    }
-    public function getCachePath(){
-        return $this->cachePath;
-    }
-
-
 }

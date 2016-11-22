@@ -1,16 +1,15 @@
 <?php
+
 /**
  * Created by PhpStorm.
  *
  * @author Bi Zhiming <evan2884@gmail.com>
- * @created 2016/10/21  下午8:07
+ * @created 2016/11/22  下午7:21
  * @since 1.0
  */
+namespace zy\log\driver;
 
-namespace zy\base;
-
-
-class Route
+class FileLogger
 {
 
 }

@@ -42,6 +42,11 @@ class BaseZiyue
      */
     public static $container;
 
+    public static $aliasPath = [
+        '@zy' => __DIR__
+    ];
+    private static $_logger;
+
     public static function run()
     {
         return "OK";
@@ -80,16 +85,22 @@ class BaseZiyue
      */
     public static function createObject($type, $params = [])
     {
+        // 字符串，代表一个类名、接口名、别名。
         if (is_string($type)) {
             return static::$container->get($type, $params);
+            // 是个数组，代表配置数组，必须含有 class 元素。
         } elseif (is_array($type) && isset($type['class'])) {
             $class = $type['class'];
             unset($type['class']);
+            // 调用DI容器的get() 来获取、创建实例
             return static::$container->get($class, $params, $type);
-        } elseif (is_array($type)) {
+        } elseif (is_callable($type, true)) {// 是个PHP callable则调用其返回一个具体实例。
+            // 是个PHP callable，那就调用它，并将其返回值作为服务或组件的实例返回
+            return call_user_func($type, $params);
+        } elseif (is_array($type)) { // 是个数组但没有 class 元素，抛出异常
             throw new InvalidConfigException('Object configuration must be an array containing a "class" element.');
-        } else {
-            throw new InvalidConfigException('Unsupported configuration type: ' . gettype($type));
+        } else { // 其他情况，抛出异常
+            throw new InvalidConfigException( "Unsupported configuration type: " . gettype($type));
         }
 
     }
@@ -129,9 +140,9 @@ class BaseZiyue
             ['ziyue' => '<a href="http://framework.myziyue.com/" rel="external">MyZiyue Framework</a>']);
     }
 
-    public static function error()
+    public static function error($message, $category = 'application')
     {
-
+        static::getLogger()->log($message, Logger::LEVEL_ERROR, $category);
     }
 
     public static function info()
@@ -174,6 +185,44 @@ class BaseZiyue
         }
 
         return $object;
+    }
+
+    public static function getAliasPath($alias){
+        if (strncmp($alias, '@', 1)) {
+            // not an alias
+            return $alias;
+        }
+        return isset(static::$aliasPath[$alias]) ? static::$aliasPath[$alias] : $alias;
+    }
+
+    public static function setAliasPath($alias, $path){
+        if (strncmp($alias, '@', 1)) {
+            // not an alias
+            return false;
+        }
+        static::$aliasPath[$alias] = $path;
+        return true;
+    }
+
+    /**
+     * @return Logger message logger
+     */
+    public static function getLogger()
+    {
+        if (self::$_logger !== null) {
+            return self::$_logger;
+        } else {
+            return self::$_logger = static::createObject('yii\log\Logger');
+        }
+    }
+
+    /**
+     * Sets the logger object.
+     * @param Logger $logger the logger object.
+     */
+    public static function setLogger($logger)
+    {
+        self::$_logger = $logger;
     }
 
 }
