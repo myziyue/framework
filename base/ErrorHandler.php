@@ -150,7 +150,7 @@ abstract class ErrorHandler extends Component
 
     public static function convertExceptionToString($exception)
     {
-        if ($exception instanceof Exception || !ZY_DEBUG) {
+        if ($exception instanceof Exception && !ZY_DEBUG) {
             $message = "{$exception->getName()}: {$exception->getMessage()}";
         } elseif (ZY_DEBUG) {
             if ($exception instanceof Exception) {

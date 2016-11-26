@@ -14,7 +14,6 @@ namespace zy\base;
 use Zy;
 use zy\di\ServiceLocator;
 use zy\exception\InvalidConfigException;
-use zy\exception\InvalidParamException;
 
 class Application extends ServiceLocator
 {
