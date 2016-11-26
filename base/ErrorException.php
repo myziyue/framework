@@ -36,36 +36,9 @@ class ErrorException extends \ErrorException
     public function __construct($message = '', $code = 0, $severity = 1, $filename = __FILE__, $lineno = __LINE__, \Exception $previous = null)
     {
         parent::__construct($message, $code, $severity, $filename, $lineno, $previous);
-
-        if (function_exists('xdebug_get_function_stack')) {
-            // XDebug trace can't be modified and used directly with PHP 7
-            // @see https://github.com/yiisoft/yii2/pull/11723
-            $xDebugTrace = array_slice(array_reverse(xdebug_get_function_stack()), 3, -1);
-            $trace = [];
-            foreach ($xDebugTrace as $frame) {
-                if (!isset($frame['function'])) {
-                    $frame['function'] = 'unknown';
-                }
-
-                // XDebug < 2.1.1: http://bugs.xdebug.org/view.php?id=695
-                if (!isset($frame['type']) || $frame['type'] === 'static') {
-                    $frame['type'] = '::';
-                } elseif ($frame['type'] === 'dynamic') {
-                    $frame['type'] = '->';
-                }
-
-                // XDebug has a different key name
-                if (isset($frame['params']) && !isset($frame['args'])) {
-                    $frame['args'] = $frame['params'];
-                }
-                $trace[] = $frame;
-            }
-
-            $ref = new \ReflectionProperty('Exception', 'trace');
-            $ref->setAccessible(true);
-            $ref->setValue($this, $trace);
-        }
     }
+
+
 
     /**
      * Returns if error is one of fatal type.

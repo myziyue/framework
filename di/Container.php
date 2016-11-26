@@ -11,7 +11,9 @@ namespace zy\di;
 
 use ReflectionClass;
 use zy\base\Component;
+use zy\base\Exception;
 use zy\exception\InvalidConfigException;
+use zy\exception\UnknownClassException;
 
 class Container extends Component
 {
@@ -152,7 +154,12 @@ class Container extends Component
         $dependencies = [];
 
         // 使用PHP5 的反射机制来获取类的有关信息，主要就是为了获取依赖信息
-        $reflection = new ReflectionClass($class);
+        if(class_exists($class)){
+            $reflection = new ReflectionClass($class);
+        } else {
+            throw new UnknownClassException('Class ' . $class . ' does not exist');
+            exit(1);
+        }
 
         // 通过类的构建函数的参数来了解这个类依赖于哪些单元
         $constructor = $reflection->getConstructor();

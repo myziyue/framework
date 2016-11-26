@@ -3,49 +3,36 @@
  * Created by PhpStorm.
  *
  * @author Bi Zhiming <evan2884@gmail.com>
- * @created 2016/11/19  下午11:17
+ * @created 2016/11/22  下午2:01
  * @since 1.0
  */
+
 namespace zy\base;
 
 use Zy;
-use zy\exception\InvalidCallException;
-use zy\exception\UnknownPropertyException;
+use zy\exception\InvalidConfigException;
 
-class Component
+class Component extends Object
 {
-    private $_behaviors;
 
-    public function __set($name, $value)
+    public $controllerNamespaces = 'app\\controllers';
+
+    private $basePath = '';
+    private $runtimePath = '';
+    private $viewPath = '';
+    private $layoutPath = '';
+
+    public static function className()
     {
-        $setter = 'set' . $name;
-        if (method_exists($this, $setter)) {
-            // set property
-            $this->$setter($value);
-
-            return ;
-        }
-
-        if (method_exists($this, 'get' . $name)) {
-            throw new InvalidCallException('Setting read-only property: ' . get_class($this) . '::' . $name);
-        } else {
-            throw new UnknownPropertyException('Setting unknown property: ' . get_class($this) . '::' . $name);
-        }
+        return get_called_class();
     }
 
-    public function __get($name)
+    public static function setInstance($instance)
     {
-        $getter = 'get' . $name;
-        if (method_exists($this, $getter)) {
-            // read property, e.g. getName()
-            return $this->$getter();
+        if ($instance === null) {
+            unset(Zy::$app->loadedModules[get_called_class()]);
         } else {
-            \Zy::createObject($name);
-        }
-        if (method_exists($this, 'set' . $name)) {
-            throw new InvalidCallException('Getting write-only property: ' . get_class($this) . '::' . $name);
-        } else {
-            throw new UnknownPropertyException('Getting unknown property: ' . get_class($this) . '::' . $name);
+            Zy::$app->loadedModules[get_class($instance)] = $instance;
         }
     }
 
@@ -55,17 +42,46 @@ class Component
         return isset(Zy::$app->loadedModules[$class]) ? Zy::$app->loadedModules[$class] : null;
     }
 
-    /**
-     * Sets the currently requested instance of this module class.
-     * @param Module|null $instance the currently requested instance of this module class.
-     * If it is null, the instance of the calling class will be removed, if any.
-     */
-    public static function setInstance($instance)
-    {
-        if ($instance === null) {
-            unset(Zy::$app->loadedModules[get_called_class()]);
-        } else {
-            Zy::$app->loadedModules[get_class($instance)] = $instance;
+    public function getAppPath(){
+        $this->basePath = Zy::getAliasPath('@app');
+        if($this->basePath){
+            return $this->basePath;
         }
+        throw new InvalidConfigException('The "appPath" configuration for the Application is required.');
     }
+    public function setAppPath($basePath){
+        Zy::setAliasPath('@app', $basePath);
+    }
+
+    public function getRuntimePath(){
+        if(Zy::getAliasPath('@runtime')){
+            return Zy::getAliasPath('@runtime');
+        }
+        return Zy::getAliasPath('@app') . DIRECTORY_SEPARATOR . 'runtimes' . DIRECTORY_SEPARATOR;
+    }
+
+    public function getViewPath(){
+        if(Zy::getAliasPath('@view')){
+            return Zy::getAliasPath('@view');
+        }
+        return Zy::getAliasPath('@app') . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+    }
+    public function getLayoutPath(){
+        if(Zy::getAliasPath('@layout')){
+            return Zy::getAliasPath('@layout');
+        }
+        return Zy::getAliasPath('@app')
+        . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR
+        . 'layouts' . DIRECTORY_SEPARATOR;
+    }
+
+    public function getTimeZone()
+    {
+        return date_default_timezone_get();
+    }
+    public function setTimeZone($value)
+    {
+        date_default_timezone_set($value);
+    }
+
 }
