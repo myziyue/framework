@@ -13,9 +13,10 @@ namespace zy\base;
 
 use Zy;
 use zy\di\ServiceLocator;
+use zy\exception\ExitException;
 use zy\exception\InvalidConfigException;
 
-class Application extends ServiceLocator
+abstract class Application extends ServiceLocator
 {
     public $version = '1.0';
     public $name = 'My Ziyue Application';
@@ -43,7 +44,16 @@ class Application extends ServiceLocator
 
     public function run()
     {
-        $this->getDb();
+        try {
+            $request = $this->handleRequest($this->getRequest());
+            $request->send();
+        } catch (ExitException $ex) {
+            if (ZY_ENV_TEST) {
+                throw new ExitException($ex->getCode());
+            } else {
+                exit($ex->getCode());
+            }
+        }
     }
 
     /**
@@ -90,7 +100,7 @@ class Application extends ServiceLocator
 
     protected function getDb()
     {
-        if(!isset($this->components['db'])){
+        if (!isset($this->components['db'])) {
             throw new InvalidConfigException("Error: no db component is configured");
             exit(1);
         }
@@ -121,6 +131,19 @@ class Application extends ServiceLocator
     {
         return [
             'logger' => 'zy\log\Logger',
+            'errorHandler' => 'zy\base\ErrorHandler',
         ];
     }
+
+    public function getRequest()
+    {
+        if (!isset($this->components['request'])) {
+            throw new InvalidConfigException("Error: no request component is configured");
+            exit(1);
+        }
+        $this->set('request', $this->components['request']);
+        return $this->get('request');
+    }
+
+    abstract public function handleRequest($request);
 }

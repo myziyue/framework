@@ -9,8 +9,21 @@
  */
 namespace zy\web;
 
+use Zy;
 
 class Application extends \zy\base\Application
 {
     public $defaultController = 'ziyue';
+
+    public function handleRequest($request)
+    {
+        return $request;
+    }
+
+    public function getCoreComponents()
+    {
+        return array_merge(parent::getCoreComponents(), [
+            'request' => ['class' => 'zy\web\Request'],
+        ]);
+    }
 }
