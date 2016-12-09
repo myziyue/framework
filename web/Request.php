@@ -9,6 +9,7 @@
 
 namespace zy\web;
 
+use Zy;
 use zy\base\Component;
 
 class Request extends Component
@@ -24,7 +25,8 @@ class Request extends Component
 
     public function resolve()
     {
-
+        $result = Zy::$app->getUrlManager()->parseRequst($this);
+        return [$result, $this->getQueryParams()];
     }
 
     public function get($name = null, $defaultValue = null)
@@ -210,6 +212,11 @@ class Request extends Component
     public function getServerPort()
     {
         return $this->isSSL() && isset($_SERVER['SERVER_PORT']) ? (int)$_SERVER['SERVER_PORT'] : 443;
+    }
+
+    public function getRequestUri()
+    {
+        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
     }
 
     /**

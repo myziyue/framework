@@ -14,6 +14,7 @@ use Zy;
 class Application extends \zy\base\Application
 {
     public $defaultController = 'ziyue';
+    public $defaultAction = 'index';
     /**
      * 全局拦截
      * @var array
@@ -31,24 +32,13 @@ class Application extends \zy\base\Application
     public function handleRequest($request)
     {
         if(!$this->catchAll){
-            try {
-                list ($route, $params) = $request->resolve();
-            } catch (UrlNormalizerRedirectException $e) {
-                $url = $e->url;
-                if (is_array($url)) {
-                    if (isset($url[0])) {
-                        // ensure the route is absolute
-                        $url[0] = '/' . ltrim($url[0], '/');
-                    }
-                    $url += $request->getQueryParams();
-                }
-                return $this->getResponse()->redirect(Url::to($url, $e->scheme), $e->statusCode);
-            }
+            list ($route, $params) = $request->resolve();
         } else {
             $route = $this->catchAll['url'];
             $params = $this->catchAll;
             unset($params['url']);
         }
+        $this->runAction($route, $params);
         return $request;
     }
 

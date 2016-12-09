@@ -15,7 +15,7 @@ use zy\exception\InvalidConfigException;
 class Component extends Object
 {
 
-    public $controllerNamespaces = 'app\\controllers';
+    public $controllerNamespace = 'app\\controller';
 
     private $basePath = '';
     private $runtimePath = '';
