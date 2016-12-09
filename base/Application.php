@@ -45,6 +45,8 @@ abstract class Application extends ServiceLocator
     public function run()
     {
         try {
+            $this->bootstrap();
+
             $request = $this->handleRequest($this->getRequest());
             $request->send();
         } catch (ExitException $ex) {
@@ -53,6 +55,17 @@ abstract class Application extends ServiceLocator
             } else {
                 exit($ex->getCode());
             }
+        }
+    }
+
+    public function bootstrap()
+    {
+        foreach($this->components as $id => $component){
+            if (!isset($this->components[$id])) {
+                throw new InvalidConfigException("Error: no $id component is configured");
+                exit(1);
+            }
+            $this->set($id, $component);
         }
     }
 
@@ -98,20 +111,14 @@ abstract class Application extends ServiceLocator
         return $this->get('errorHandler');
     }
 
-    protected function getDb()
+    public function getDb()
     {
-        if (!isset($this->components['db'])) {
-            throw new InvalidConfigException("Error: no db component is configured");
-            exit(1);
-        }
-        $this->set('db', $this->components['db']);
         return $this->get('db');
     }
 
-    protected function getLogger()
+    public function getLogger()
     {
-        $this->set('logger', $this->components['logger']);
-        return $this->get('logger')->createFactory();
+        return $this->get('logger')->getInstrance();
     }
 
     protected function registerErrorHandler(&$config)
@@ -137,11 +144,6 @@ abstract class Application extends ServiceLocator
 
     public function getRequest()
     {
-        if (!isset($this->components['request'])) {
-            throw new InvalidConfigException("Error: no request component is configured");
-            exit(1);
-        }
-        $this->set('request', $this->components['request']);
         return $this->get('request');
     }
 

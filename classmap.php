@@ -39,4 +39,6 @@ return [
     'zy\web\ErrorAction' => ZY_PATH . '/web/ErrorAction.php',
     'zy\web\ErrorHandler' => ZY_PATH . '/web/ErrorHandler.php',
     'zy\web\Request' => ZY_PATH . '/web/Request.php',
+    'zy\web\Response' => ZY_PATH . '/web/Response.php',
+    'zy\web\UrlNormalizerRedirectException' => ZY_PATH . '/web/UrlNormalizerRedirectException.php',
 ];

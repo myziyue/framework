@@ -31,9 +31,9 @@ class Logger extends Component
     public $type = self::TYPE_FILE;
 
 
-    public function instrance()
+    public function getInstrance()
     {
-
+        return $this->createFactory();
     }
 
     public function createFactory(){
