@@ -13,5 +13,8 @@ use zy\di\ServiceLocator;
 
 class Connention extends ServiceLocator
 {
+    public function run()
+    {
 
+    }
 }

@@ -85,6 +85,9 @@ abstract class Application extends ServiceLocator
         if(isset($config['controllerNamespace'])){
             $this->controllerNamespace = $config['controllerNamespace'];
         }
+        if(isset($config['catchAll'])){
+            $this->catchAll = $config['catchAll'];
+        }
 
         $this->getRuntimePath();
         $this->getViewPath();
@@ -110,7 +113,7 @@ abstract class Application extends ServiceLocator
         }
     }
 
-    protected function getErrorHandler()
+    public function getErrorHandler()
     {
         return $this->get('errorHandler');
     }
@@ -138,14 +141,7 @@ abstract class Application extends ServiceLocator
         }
     }
 
-    protected function getCoreComponents()
-    {
-        return [
-            'logger' => 'zy\log\Logger',
-            'errorHandler' => 'zy\base\ErrorHandler',
-            'urlManager' => 'zy\web\UrlManager',
-        ];
-    }
+
 
     public function getRequest()
     {
@@ -156,8 +152,6 @@ abstract class Application extends ServiceLocator
     {
         return $this->get('urlManager');
     }
-
-    abstract public function handleRequest($request);
 
     public function runAction($route, $params)
     {
@@ -176,4 +170,15 @@ abstract class Application extends ServiceLocator
 
         $controller->$actionName();
     }
+
+    protected function getCoreComponents()
+    {
+        return [
+            'logger' => 'zy\log\Logger',
+            'errorHandler' => 'zy\base\ErrorHandler',
+            'urlManager' => 'zy\web\UrlManager',
+        ];
+    }
+
+    abstract public function handleRequest($request);
 }

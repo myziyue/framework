@@ -16,7 +16,7 @@ use zy\web\HttpException;
 
 abstract class ErrorHandler extends Component
 {
-    public $discardExistingOutput = true;
+    public $discardExistingOutput = false;
     public $memoryReserveSize = 262144;
     public $exception;
 

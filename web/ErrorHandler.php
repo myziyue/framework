@@ -13,6 +13,9 @@ use Zy;
 
 class ErrorHandler extends \zy\base\ErrorHandler
 {
+    public $errorAction = 'ziyue/error';
+
+    public $exception = null;
 
     /**
      * Renders the exception.
@@ -20,6 +23,11 @@ class ErrorHandler extends \zy\base\ErrorHandler
      */
     protected function renderException($exception)
     {
-        Zy::p(self::convertExceptionToString($exception));
+        $this->exception = self::convertExceptionToString($exception);
+        if(ZY_DEBUG){
+            Zy::p($this->exception);
+        } else {
+            Zy::$app->runAction($this->errorAction, Zy::$app->getRequest()->getQueryParams());
+        }
     }
 }
