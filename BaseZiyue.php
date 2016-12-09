@@ -142,22 +142,22 @@ class BaseZiyue
 
     public static function error($message, $category = 'application')
     {
-        static::$app->logger->log($message, Logger::LEVEL_ERROR, $category);
+        static::$app->getLogger()->log($message, Logger::LEVEL_ERROR, $category);
     }
 
     public static function info($message, $category = 'application')
     {
-        static::$app->logger->log($message, Logger::LEVEL_INFO, $category);
+        static::$app->getLogger()->log($message, Logger::LEVEL_INFO, $category);
     }
 
     public static function warning($message, $category = 'application')
     {
-        static::$app->logger->log($message, Logger::LEVEL_WARNING, $category);
+        static::$app->getLogger()->log($message, Logger::LEVEL_WARNING, $category);
     }
 
     public static function trace($message, $category = 'application')
     {
-        static::$app->logger->log($message, Logger::LEVEL_TRACE, $category);
+        static::$app->getLogger()->log($message, Logger::LEVEL_TRACE, $category);
     }
 
     /**

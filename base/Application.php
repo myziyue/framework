@@ -45,6 +45,8 @@ abstract class Application extends ServiceLocator
     public function run()
     {
         try {
+            $this->bootstrap();
+
             $request = $this->handleRequest($this->getRequest());
             $request->send();
         } catch (ExitException $ex) {
@@ -53,6 +55,17 @@ abstract class Application extends ServiceLocator
             } else {
                 exit($ex->getCode());
             }
+        }
+    }
+
+    public function bootstrap()
+    {
+        foreach ($this->components as $id => $component) {
+            if (!isset($this->components[$id])) {
+                throw new InvalidConfigException("Error: no $id component is configured");
+                exit(1);
+            }
+            $this->set($id, $component);
         }
     }
 
@@ -67,6 +80,10 @@ abstract class Application extends ServiceLocator
             unset($config['appPath']);
         } else {
             throw new InvalidConfigException('The "appPath" configuration for the Application is required.');
+        }
+
+        if(isset($config['controllerNamespace'])){
+            $this->controllerNamespace = $config['controllerNamespace'];
         }
 
         $this->getRuntimePath();
@@ -98,20 +115,14 @@ abstract class Application extends ServiceLocator
         return $this->get('errorHandler');
     }
 
-    protected function getDb()
+    public function getDb()
     {
-        if (!isset($this->components['db'])) {
-            throw new InvalidConfigException("Error: no db component is configured");
-            exit(1);
-        }
-        $this->set('db', $this->components['db']);
         return $this->get('db');
     }
 
-    protected function getLogger()
+    public function getLogger()
     {
-        $this->set('logger', $this->components['logger']);
-        return $this->get('logger')->createFactory();
+        return $this->get('logger')->getInstrance();
     }
 
     protected function registerErrorHandler(&$config)
@@ -132,18 +143,37 @@ abstract class Application extends ServiceLocator
         return [
             'logger' => 'zy\log\Logger',
             'errorHandler' => 'zy\base\ErrorHandler',
+            'urlManager' => 'zy\web\UrlManager',
         ];
     }
 
     public function getRequest()
     {
-        if (!isset($this->components['request'])) {
-            throw new InvalidConfigException("Error: no request component is configured");
-            exit(1);
-        }
-        $this->set('request', $this->components['request']);
         return $this->get('request');
     }
 
+    public function getUrlManager()
+    {
+        return $this->get('urlManager');
+    }
+
     abstract public function handleRequest($request);
+
+    public function runAction($route, $params)
+    {
+        $route = explode('/', $route);
+        $controllerName = ucwords(isset($route[0]) ? $route[0] : $this->defaultController);
+        $controllerClass = $this->controllerNamespace . '\\' . $controllerName . 'Controller';
+        include_once  Zy::getAliasPath('@app') . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $controllerClass) . '.php';
+        $controller = Zy::createObject($controllerClass);
+        // action
+        $actionName = isset($route[1]) ? $route[1] : $this->defaultAction;
+        $actionArray = explode('-', $actionName);
+        foreach($actionArray as $key => $action){
+            $actionArray[$key] = ucwords($action);
+        }
+        $actionName = 'action' . implode('', $actionArray);
+
+        $controller->$actionName();
+    }
 }
