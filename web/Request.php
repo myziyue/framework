@@ -216,7 +216,9 @@ class Request extends Component
 
     public function getRequestUri()
     {
-        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
+        $serverURI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
+        $serverURI = explode('?', $serverURI);
+        return $serverURI[0];
     }
 
     /**
