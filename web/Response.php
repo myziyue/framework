@@ -13,7 +13,7 @@ use zy\base\Component;
 
 class Response extends Component
 {
-
+    public $data = null;
     public function redirect($url, $code)
     {
 
