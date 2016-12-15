@@ -15,17 +15,16 @@ class ErrorHandler extends \zy\base\ErrorHandler
 {
     public $errorAction = 'ziyue/error';
 
-    public $exception = null;
-
+    public $exception;
     /**
      * Renders the exception.
      * @param \Exception $exception the exception to be rendered.
      */
-    protected function renderException($exception)
+    public function renderException($exception)
     {
-        $this->exception = self::convertExceptionToString($exception);
+        $this->exception = $exception;
         if(ZY_DEBUG){
-            Zy::p($this->exception);
+            Zy::p(self::convertExceptionToString($exception));
         } else {
             Zy::$app->runAction($this->errorAction, Zy::$app->getRequest()->getQueryParams());
         }

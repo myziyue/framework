@@ -79,8 +79,6 @@ abstract class ErrorHandler extends Component
             error_log($msg);
             exit(1);
         }
-
-        $this->exception = null;
     }
 
     public function handleError($code, $message, $file, $line)

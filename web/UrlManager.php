@@ -14,9 +14,12 @@ use zy\base\Component;
 
 class UrlManager extends Component
 {
+    public $showScriptName = false;
+
     public function parseRequst($request)
     {
-        $requestURI = ltrim($request->getRequestUri(), '/');
+        $requestURI = ltrim($request->getRequestUri(), '/index.php');
+        $requestURI = ltrim($requestURI, '/');
         if(empty($requestURI)){
             return Zy::$app->defaultController . '/' . Zy::$app->defaultAction;
         }
@@ -24,7 +27,7 @@ class UrlManager extends Component
         if(sizeof($route) == 1) {
             return $requestURI . '/' . Zy::$app->defaultAction;
         } elseif(sizeof($route) == 2) {
-            return $requestURI;
+            return isset($route[1]) && $route[1] ? $requestURI : $route[0] . '/' . Zy::$app->defaultAction;
         } else {
             throw new NotFoundHttpException("Page Not Found!");
             exit(1);

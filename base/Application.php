@@ -141,34 +141,19 @@ abstract class Application extends ServiceLocator
         }
     }
 
-
-
     public function getRequest()
     {
         return $this->get('request');
     }
 
+    public function getResponse()
+    {
+        return $this->get('response');
+    }
+
     public function getUrlManager()
     {
         return $this->get('urlManager');
-    }
-
-    public function runAction($route, $params)
-    {
-        $route = explode('/', $route);
-        $controllerName = ucwords(isset($route[0]) ? $route[0] : $this->defaultController);
-        $controllerClass = $this->controllerNamespace . '\\' . $controllerName . 'Controller';
-        include_once  Zy::getAliasPath('@app') . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $controllerClass) . '.php';
-        $controller = Zy::createObject($controllerClass);
-        // action
-        $actionName = isset($route[1]) ? $route[1] : $this->defaultAction;
-        $actionArray = explode('-', $actionName);
-        foreach($actionArray as $key => $action){
-            $actionArray[$key] = ucwords($action);
-        }
-        $actionName = 'action' . implode('', $actionArray);
-
-        $controller->$actionName();
     }
 
     protected function getCoreComponents()

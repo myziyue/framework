@@ -42,6 +42,34 @@ class Application extends \zy\base\Application
         return $request;
     }
 
+    public function runAction($route, $params)
+    {
+        $route = explode('/', $route);
+        //controller
+        $controllerName = ucwords(isset($route[0]) ? $route[0] : $this->defaultController);
+        $controllerClass = $this->controllerNamespace . '\\' . $controllerName . 'Controller';
+        $controllerFile = realpath(Zy::getAliasPath('@app') . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $controllerClass) . '.php');
+        if(!file_exists($controllerFile)){
+            throw new NotFoundHttpException("Page Not Found!");
+            exit(1);
+        }
+        include_once  $controllerFile;
+        $controller = Zy::createObject($controllerClass);
+        // action
+        $actionName = isset($route[1]) ? $route[1] : $this->defaultAction;
+        $actionArray = explode('-', $actionName);
+        foreach($actionArray as $key => $action){
+            $actionArray[$key] = ucwords($action);
+        }
+        $actionName = 'action' . implode('', $actionArray);
+        if(!method_exists($controller, $actionName)){
+            throw new NotFoundHttpException("Page Not Found!");
+            exit(1);
+        }
+        // run action
+        $controller->$actionName();
+    }
+
     public function getCoreComponents()
     {
         return array_merge(parent::getCoreComponents(), [
