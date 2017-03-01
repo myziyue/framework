@@ -63,4 +63,19 @@ class Object
             throw new InvalidCallException('Unsetting read-only property: ' . get_class($this) . '::' . $name);
         }
     }
+
+    public function hasProperty($name, $checkVars = true)
+    {
+        return $this->canGetProperty($name, $checkVars) || $this->canSetProperty($name, false);
+    }
+
+    public function canGetProperty($name, $checkVars = true)
+    {
+        return method_exists($this, 'get' . $name) || $checkVars && property_exists($this, $name);
+    }
+
+    public function canSetProperty($name, $checkVars = true)
+    {
+        return method_exists($this, 'set' . $name) || $checkVars && property_exists($this, $name);
+    }
 }

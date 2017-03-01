@@ -20,17 +20,19 @@ class Application extends Components
     public $version = "0.0.1";
     public $charset = "UTF-8";
     public $language = "Zh-cn";
+    public $appPath = '';
     public $defaultNameSpace = "\\app\\controllers";
     public $defaultController = 'IndexController';
     public $defaultAction = "actionIndex";
-    public $components = [];
+    protected $components = [];
+    public $catchAll = '';
 
     public function __construct($config)
     {
         \Ziyue::$app = $this;
         $this->preInit($config);
         $this->registerErrorHandler();
-        $this->bootstrap();
+        $this->bootstrap($config);
     }
 
     public function preInit(&$config){
@@ -45,9 +47,12 @@ class Application extends Components
         unset($config['components']);
     }
 
-    public function bootstrap(){
+    public function bootstrap($config){
         foreach ($this->components as $id => $definition){
             $this->set($id, $definition);
+        }
+        foreach ($config as $property => $value){
+            $this->$property = $value;
         }
     }
 
