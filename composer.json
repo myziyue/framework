@@ -33,7 +33,7 @@
         "psr-4": {"zy\\": ""}
     },
     "bin": [
-        "zy"
+        "ziyue"
     ],
     "extra": {
         "branch-alias": {

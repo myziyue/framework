@@ -1,16 +1,15 @@
 <?php
-
 /**
  * Created by PhpStorm.
  *
  * @author Bi Zhiming <evan2884@gmail.com>
- * @created 2016/11/20  上午9:56
+ * @created 2017/3/1  下午4:17
  * @since 1.0
  */
-namespace zy\exception;
 
+namespace ziyue\exception;
 
-class InvalidCallException extends \zy\base\Exception
+class InvalidCallException extends \Exception
 {
     public function getName()
     {
