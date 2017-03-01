@@ -8,6 +8,7 @@
  */
 namespace ziyue;
 
+use ziyue\exception\UnknownClassException;
 
 // 框架加载开始时间
 defined('ZY_BEGIN_TIME') or define('ZY_BEGIN_TIME', microtime(true));
@@ -24,6 +25,10 @@ defined('ZY_ENABLE_ERROR_HANDLER') or define('ZY_ENABLE_ERROR_HANDLER', true);
 class BaseZiyue
 {
     /**
+     * @var array class map
+     */
+    public static $classMap = [];
+    /**
      * 打印调试信息
      * @param $data
      */
@@ -36,6 +41,17 @@ class BaseZiyue
         } else {
             echo "<pre style='position: relative;z-index: 100%; padding: 10px;border-radius: 5px;background: #F5F5F5; border: 1px solid #AAA;font-size:14px;line-height: 18px; opacity: 0.9;'>"
                 . print_r($data, true) . "</pre>";
+        }
+    }
+
+    public static function autoload($className)
+    {
+        if (isset(static::$classMap[$className])) {
+            $classFile = static::$classMap[$className];
+
+            include($classFile);
+        } elseif (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
+            throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
         }
     }
 }
