@@ -9,6 +9,7 @@
 
 namespace ziyue\core;
 
+use ziyue\core\Exception;
 
 class ExitException extends \Exception
 {

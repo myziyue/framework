@@ -24,6 +24,7 @@ defined('ZY_ENABLE_ERROR_HANDLER') or define('ZY_ENABLE_ERROR_HANDLER', true);
 
 class BaseZiyue
 {
+    public static $app = null;
     /**
      * @var array class map
      */
@@ -39,7 +40,7 @@ class BaseZiyue
         } elseif (is_null($data)) {
             var_dump($data);
         } else {
-            echo "<pre style='position: relative;z-index: 100%; padding: 10px;border-radius: 5px;background: #F5F5F5; border: 1px solid #AAA;font-size:14px;line-height: 18px; opacity: 0.9;'>"
+            echo "<pre style='word-wrap: break-word; position: relative;z-index: 100%; padding: 10px;border-radius: 5px;background: #F5F5F5; border: 1px solid #AAA;font-size:14px;line-height: 18px; opacity: 0.9;'>"
                 . print_r($data, true) . "</pre>";
         }
     }
@@ -48,10 +49,30 @@ class BaseZiyue
     {
         if (isset(static::$classMap[$className])) {
             $classFile = static::$classMap[$className];
+            if(!file_exists($classFile)){
+                throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
+            }
 
             include($classFile);
         } elseif (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
-            throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
+            throw new UnknownClassException("Unable to find '$className' . Namespace missing?");
         }
+    }
+
+    public static function createComponent($name, $class = ''){
+        if($class === ''){
+            if (isset(\Ziyue::$app->components[$name])){
+                $class = \Ziyue::$app->components[$name];
+            }else {
+                throw new UnknownClassException('Getting unknown class: ' . $name);
+            }
+        }
+
+        try {
+            $componentObj = new $class;
+        } catch (\Exception $ex) {
+            throw new UnknownClassException('Getting unknown class: ' . $name . ' in file: ' . $class . '.');
+        }
+        return $componentObj;
     }
 }

@@ -15,8 +15,6 @@ use ziyue\exception\UnknownPropertyException;
 
 class Object
 {
-    public static $intrance = [];
-    
     public function __get($name)
     {
         $getter = 'get' . ucfirst($name);
