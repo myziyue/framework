@@ -9,7 +9,9 @@
 
 namespace ziyue\exception;
 
-class InvalidCallException extends \Exception
+use ziyue\core\Exception;
+
+class InvalidCallException extends Exception
 {
     public function getName()
     {

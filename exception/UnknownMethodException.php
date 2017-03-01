@@ -9,7 +9,9 @@
 
 namespace ziyue\exception;
 
-class UnknownMethodException extends \Exception
+use ziyue\core\Exception;
+
+class UnknownMethodException extends Exception
 {
     public function getName()
     {

@@ -9,7 +9,9 @@
 
 namespace ziyue\exception;
 
-class UnknownPropertyException extends \Exception
+use ziyue\core\Exception;
+
+class UnknownPropertyException extends Exception
 {
     public function getName()
     {

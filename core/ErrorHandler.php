@@ -9,7 +9,6 @@
 
 namespace ziyue\core;
 
-
 class ErrorHandler extends Object
 {
     public $exception = null;
@@ -50,8 +49,7 @@ class ErrorHandler extends Object
         $this->exception = $exception;
         $this->shutdownFunction();
         if(ZY_DEBUG){
-            $exception = $exception->getPrevious();
-            $exceptionName = ($exception instanceof \Exception || $exception instanceof \ErrorException) ? $exception->getName() : 'Exception';
+            $exceptionName = ($exception instanceof Exception || $exception instanceof ErrorException) ? $exception->getName() : 'Exception';
             \Ziyue::p(
                 "{$exceptionName}: '{$exception->getMessage()}' \n\nin "
                 . $exception->getFile() . ':' . $exception->getLine() . "\n\n"

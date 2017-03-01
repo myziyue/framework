@@ -12,55 +12,77 @@ namespace ziyue\core;
 
 use ziyue\db\Connection;
 use ziyue\exception\UnknownClassException;
+use ziyue\exception\InvalidConfigException;
 
-class Application extends Object
+class Application extends Components
 {
+    public $name = "My Application Name";
+    public $version = "0.0.1";
+    public $charset = "UTF-8";
+    public $language = "Zh-cn";
+    public $defaultNameSpace = "\\app\\controllers";
+    public $defaultController = 'IndexController';
+    public $defaultAction = "actionIndex";
+    public $components = [];
+
+    public function __construct($config)
+    {
+        \Ziyue::$app = $this;
+        $this->preInit($config);
+        $this->registerErrorHandler();
+        $this->bootstrap();
+    }
+
+    public function preInit(&$config){
+        $this->components = $this->coreComponents();
+        // 合并组件
+        if(!isset($config['components'])){
+            return false;
+        }
+        foreach ($config['components'] as $component => $value){
+            $this->components[$component] = $value;
+        }
+        unset($config['components']);
+    }
+
+    public function bootstrap(){
+        foreach ($this->components as $id => $definition){
+            $this->set($id, $definition);
+        }
+    }
+
     public function run(){
         try {
-            $this->getErrorHandler()->register();
-            $this->getDb();
+//            $this->getDb();
             echo "ok";
         } catch (\Exception $ex){
             throw new ExitException($ex->getCode(), $ex->getMessage(), $ex->getCode(), $ex);
         }
     }
 
+    protected function registerErrorHandler(){
+        $this->set('errorHandler', $this->components['errorHandler']);
+        $this->get('errorHandler')->register();
+    }
     public function getErrorHandler(){
-        if(!isset(self::$intrance['errorHandler'])){
-            self::$intrance['errorHandler'] = $this->getComponent('errorHandler');
-        }
-        return self::$intrance['errorHandler'];
+        return $this->get('errorHandler');
     }
 
     public function getDb(){
-        if(!isset(self::$intrance['db'])){
-            self::$intrance['db'] = $this->getComponent('db');
-        }
-        return self::$intrance['db'];
+        return $this->get('db');
     }
 
-    public function end($status = 0)
-    {
-        if (ZY_DEBUG) {
-            throw new ExitException($status);
-        } else {
-            exit($status);
-        }
+    public function getLogger(){
+        return $this->get('logger');
     }
-
-    public function getComponent($componentName) {
-        $components = [
-            'db' => 'ziyue\db\Connection',
-            'errorHandler' => 'ziyue\core\ErrorHandler'
+    /**
+     * 默认核心组件
+     * @return array
+     */
+    public function coreComponents() {
+        return [
+            'errorHandler' => ['class' => 'ziyue\core\ErrorHandler'],
+            'logger' => ['class' => 'ziyue\log\Logger']
         ];
-        if (isset($components[$componentName])){
-            try {
-                $componentObj = new $components[$componentName];
-            } catch (\Exception $ex) {
-                throw new UnknownClassException('Getting unknown class: ' . $componentName);
-            }
-            return $componentObj;
-        }
-        throw new UnknownClassException('Getting unknown class: ' . $componentName);
     }
 }
