@@ -21,6 +21,9 @@ return [
     'ziyue\db\Connection' => ZY_PATH . '/db/Connection.php',
     //log
     'ziyue\log\Logger' => ZY_PATH . '/log/Logger.php',
+    'ziyue\log\drivers\DBLog' => ZY_PATH . '/log/drivers/DBLog.php',
+    'ziyue\log\drivers\FileLog' => ZY_PATH . '/log/drivers/FileLog.php',
+    'ziyue\log\drivers\RedisLog' => ZY_PATH . '/log/drivers/RedisLog.php',
     //exception
     'ziyue\exception\InvalidCallException' => ZY_PATH . '/exception/InvalidCallException.php',
     'ziyue\exception\InvalidConfigException' => ZY_PATH . '/exception/InvalidConfigException.php',

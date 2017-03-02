@@ -9,6 +9,7 @@
 namespace ziyue;
 
 use ziyue\exception\UnknownClassException;
+use ziyue\log\Logger;
 
 // 框架加载开始时间
 defined('ZY_BEGIN_TIME') or define('ZY_BEGIN_TIME', microtime(true));
@@ -29,6 +30,23 @@ class BaseZiyue
      * @var array class map
      */
     public static $classMap = [];
+
+    public static function error($log, $category = 'app'){
+        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_ERROR, $category);
+    }
+
+    public static function warning($log, $category = 'app'){
+        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_WARNING, $category);
+    }
+
+    public static function info($log, $category = 'app'){
+        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_INFO, $category);
+    }
+
+    public static function trace($log, $category = 'app'){
+        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_TRACE, $category);
+    }
+
     /**
      * 打印调试信息
      * @param $data

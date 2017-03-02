@@ -45,14 +45,15 @@ class Application extends Components
             $this->components[$component] = $value;
         }
         unset($config['components']);
+        
+        foreach ($config as $property => $value){
+            $this->$property = $value;
+        }
     }
 
     public function bootstrap($config){
         foreach ($this->components as $id => $definition){
             $this->set($id, $definition);
-        }
-        foreach ($config as $property => $value){
-            $this->$property = $value;
         }
     }
 
@@ -78,6 +79,7 @@ class Application extends Components
     }
 
     public function getLogger(){
+        $this->set('logger', $this->components['logger']);
         return $this->get('logger');
     }
     /**
