@@ -32,4 +32,6 @@ return [
     'ziyue\exception\UnknownPropertyException' => ZY_PATH . '/exception/UnknownPropertyException.php',
     //web
     'ziyue\web\Application' => ZY_PATH . '/web/Application.php',
+    'ziyue\web\Request' => ZY_PATH . '/web/Request.php',
+    'ziyue\web\Response' => ZY_PATH . '/web/Response.php',
 ];

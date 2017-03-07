@@ -17,7 +17,7 @@ class Application extends \ziyue\core\Application
     public function run()
     {
         try {
-//            $this->getDb();
+            $this->request();
             echo "ok";
         } catch (\Exception $ex){
             throw new ExitException($ex->getCode(), $ex->getMessage(), $ex->getCode(), $ex);
@@ -25,6 +25,25 @@ class Application extends \ziyue\core\Application
     }
 
     public function request(){
+        var_dump($routeUrl = \Ziyue::$app->request->get('id', Request::TYPE_INT));
+    }
 
+    public function getRequest(){
+        return $this->get('request');
+    }
+
+    public function getResponse(){
+        return $this->get('response');
+    }
+
+    /**
+     * 默认核心组件
+     * @return array
+     */
+    public function coreComponents() {
+        return array_merge([
+            'request' => ['class' => 'ziyue\web\Request'],
+            'response' => ['class' => 'ziyue\web\Response']
+        ], parent::coreComponents());
     }
 }
