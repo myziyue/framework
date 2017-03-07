@@ -45,7 +45,7 @@ class Application extends Components
             $this->components[$component] = $value;
         }
         unset($config['components']);
-        
+
         foreach ($config as $property => $value){
             $this->$property = $value;
         }
@@ -59,7 +59,6 @@ class Application extends Components
 
     public function run(){
         try {
-//            $this->getDb();
             echo "ok";
         } catch (\Exception $ex){
             throw new ExitException($ex->getCode(), $ex->getMessage(), $ex->getCode(), $ex);
