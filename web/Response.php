@@ -13,5 +13,6 @@ use ziyue\core\Object;
 
 class Response extends Object
 {
-
+    public function redirect($url){
+    }
 }

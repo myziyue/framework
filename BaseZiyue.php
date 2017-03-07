@@ -61,6 +61,7 @@ class BaseZiyue
             echo "<pre style='word-wrap: break-word; position: relative;z-index: 100%; padding: 10px;border-radius: 5px;background: #F5F5F5; border: 1px solid #AAA;font-size:14px;line-height: 18px; opacity: 0.9;'>"
                 . print_r($data, true) . "</pre>";
         }
+        exit(1);
     }
 
     public static function autoload($className)

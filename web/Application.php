@@ -17,15 +17,22 @@ class Application extends \ziyue\core\Application
     public function run()
     {
         try {
-            $this->request();
+            $this->handleRequest();
             echo "ok";
         } catch (\Exception $ex){
             throw new ExitException($ex->getCode(), $ex->getMessage(), $ex->getCode(), $ex);
         }
     }
 
-    public function request(){
-        var_dump($routeUrl = \Zy::$app->request->get('id', Request::TYPE_INT));
+    public function handleRequest(){
+        if($this->catchAll === null){
+            list($router, $params) = \Zy::$app->request->parseUrl();
+        } else {
+            $router = $this->catchAll['class'];
+            $params = $this->catchAll;
+            unset($params['class']);
+        }
+        \Zy::$app->runAction($router, $params);
     }
 
     public function getRequest(){

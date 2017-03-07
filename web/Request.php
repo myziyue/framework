@@ -18,9 +18,45 @@ class Request extends Object
     const TYPE_FLOAT = 1;
     const TYPE_STRING = 2;
 
+    public $queryParams = [];
+
+    /**
+     * 解析url地址
+     * @return array
+     */
+    public function parseUrl(){
+        $uri = $_SERVER['REQUEST_URI'];
+        if(strpos('?', $uri) === false){
+            // 默认首页
+            if($uri == '/'){
+                $router = \Zy::$app->defaultController . '/' . \Zy::$app->defaultAction;
+                $params = [];
+                return [$router, $params];
+            }
+
+            $uriArr = explode('/', trim($uri, '/'));
+            // 只有控制器
+            if (sizeof($uri) == 1){
+                $router = $uriArr[0] . '/' . \Zy::$app->defaultAction;
+                $params = [];
+                return [$router, $params];
+            }
+            // 完整
+            $router = $uriArr[0] . '/' . $uriArr[1];
+            for($i = 2; $i < sizeof($uriArr); $i++){
+                $params[$uriArr[$i]] = $uriArr[$i+1];
+                $i++;
+            }
+        } else {
+            $uriArr = explode('?', $uri);
+            $router = $uriArr[0];
+            $params = $_GET;
+        }
+        return [$router, $params];
+    }
     public function get($name = '', $default = ''){
         if($name){
-            return isset($_GET[$name]) ? $_GET[$name] : NULL;
+            return isset($this->queryParams[$name]) ? $this->queryParams[$name] : NULL;
         }
         $value = $_GET;
     }
@@ -78,5 +114,20 @@ class Request extends Object
         }
 
         return 'GET';
+    }
+
+    public function getHostInfo(){
+        $port = $_SERVER['SERVER_PORT'] == 80 || $_SERVER['SERVER_PORT'] == 443 ? '' : $_SERVER['SERVER_PORT'];
+        $protocol = $this->isSsl() ? 'https' : 'http';
+        return $protocol . "://" . $this->getServerName() . ($port ? ':' .$port : '') . '/';
+    }
+
+    public function getServerName(){
+        return $_SERVER['SERVER_NAME'];
+    }
+
+    public function isSsl(){
+        return ((isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))) ||
+            (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'] ))) ? true : false;
     }
 }

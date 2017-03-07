@@ -27,6 +27,7 @@ return [
     //exception
     'ziyue\exception\InvalidCallException' => ZY_PATH . '/exception/InvalidCallException.php',
     'ziyue\exception\InvalidConfigException' => ZY_PATH . '/exception/InvalidConfigException.php',
+    'ziyue\exception\NotFoundHttpException' => ZY_PATH . '/exception/NotFoundHttpException.php',
     'ziyue\exception\UnknownClassException' => ZY_PATH . '/exception/UnknownClassException.php',
     'ziyue\exception\UnknownMethodException' => ZY_PATH . '/exception/UnknownMethodException.php',
     'ziyue\exception\UnknownPropertyException' => ZY_PATH . '/exception/UnknownPropertyException.php',
