@@ -26,9 +26,9 @@ class Components extends Object
         self::$definitions[$name] = $definition;
         // 对象
         if(isset($definition['class'])){
-            self::$instance[$name] = \Ziyue::createComponent($name, $definition['class']);
+            self::$instance[$name] = \Zy::createComponent($name, $definition['class']);
         } else {
-            self::$instance[$name] = \Ziyue::createComponent($name);
+            self::$instance[$name] = \Zy::createComponent($name);
         }
         unset($definition['class']);
         // 初始化参数

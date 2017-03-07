@@ -31,11 +31,11 @@ class ErrorHandler extends Object
     public function errorHandler($code, $message, $file, $line, $context){
         $this->shutdownFunction();
         $message = "Error: '{$message}' error code {$code}\n\nFile :{$file}\n\nLine :{$line}\n\n";
-        \Ziyue::error($message);
+        \Zy::error($message);
         if(ZY_DEBUG){
-            \Ziyue::p($message);
+            \Zy::p($message);
         } else {
-            \Ziyue::p('An internal server error occurred.');
+            \Zy::p('An internal server error occurred.');
         }
     }
 
@@ -49,11 +49,11 @@ class ErrorHandler extends Object
         $exceptionName = ($exception instanceof Exception || $exception instanceof ErrorException) ? $exception->getName() : 'Exception';
         $message = "{$exceptionName}: '{$exception->getMessage()}' \n\nin {$exception->getFile()}:{$exception->getLine()}\n\n"
             . "Stack trace:\n" . $exception->getTraceAsString();
-        \Ziyue::error($message);
+        \Zy::error($message);
         if(ZY_DEBUG){
-            \Ziyue::p($message);
+            \Zy::p($message);
         } else {
-            \Ziyue::p('An internal server error occurred.');
+            \Zy::p('An internal server error occurred.');
         }
     }
 
@@ -64,11 +64,11 @@ class ErrorHandler extends Object
         $e = error_get_last();
         if(isset($e['type'])) {
             $message = "Error: '{$e['message']}' File :{$e['file']}  Line :{$e['line']}\n\n";
-            \Ziyue::warning($message);
+            \Zy::warning($message);
         }
         if(ZY_DEBUG) {
             if(isset($e['type'])){
-                \Ziyue::p($message);
+                \Zy::p($message);
             }
         }
         restore_error_handler();
