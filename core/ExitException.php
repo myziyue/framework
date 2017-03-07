@@ -9,8 +9,6 @@
 
 namespace ziyue\core;
 
-use ziyue\core\Exception;
-
 class ExitException extends \Exception
 {
     public function __construct($status = 0, $message = null, $code = 0, \Exception $previous = null)

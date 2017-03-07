@@ -11,6 +11,7 @@
 namespace ziyue\core;
 
 use ziyue\db\Connection;
+use ziyue\exception\NotFoundHttpException;
 use ziyue\exception\UnknownClassException;
 use ziyue\exception\InvalidConfigException;
 
@@ -22,10 +23,10 @@ class Application extends Components
     public $language = "Zh-cn";
     public $appPath = '';
     public $defaultNameSpace = "\\app\\controllers";
-    public $defaultController = 'IndexController';
-    public $defaultAction = "actionIndex";
+    public $defaultController = 'Index';
+    public $defaultAction = "Index";
     protected $components = [];
-    public $catchAll = '';
+    public $catchAll = null;
 
     public function __construct($config)
     {
@@ -81,6 +82,41 @@ class Application extends Components
         $this->set('logger', $this->components['logger']);
         return $this->get('logger');
     }
+
+    public function runAction($router, $params = []){
+        $router = explode('/', trim($router, '/'));
+        // controller
+        if(strpos($router[0], '-') === false){
+            $controller = ucfirst($router[0]) . 'Controller';
+        } else {
+            $routerArr = explode($router[0], '-');
+            foreach ($routerArr as $key => $value){
+                $routerArr[$key] = ucfirst($value);
+            }
+            $controller = implode('', $routerArr) . 'Controller';
+        }
+
+        // action
+        if(strpos($router[1], '-') === false){
+            $action = 'action'. ucfirst($router[1]);
+        } else {
+            $routerArr = explode($router[1], '-');
+            foreach ($routerArr as $key => $value){
+                $routerArr[$key] = ucfirst($value);
+            }
+            $action = 'action' . implode('', $routerArr);
+        }
+
+        $className = \Zy::$app->defaultNameSpace . '\\' . $controller;
+        $classFile = \Zy::$app->appPath . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . $controller . '.php';
+        if(!file_exists($classFile)) {
+            throw new NotFoundHttpException('Page not found.');
+        }
+        include_once $classFile;
+        \Zy::$app->request->queryParams = $params;
+        (new $className())->$action();
+    }
+
     /**
      * 默认核心组件
      * @return array
