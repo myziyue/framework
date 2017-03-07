@@ -25,7 +25,7 @@ class Application extends \ziyue\core\Application
     }
 
     public function request(){
-        var_dump($routeUrl = \Ziyue::$app->request->get('id', Request::TYPE_INT));
+        var_dump($routeUrl = \Zy::$app->request->get('id', Request::TYPE_INT));
     }
 
     public function getRequest(){

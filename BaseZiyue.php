@@ -32,19 +32,19 @@ class BaseZiyue
     public static $classMap = [];
 
     public static function error($log, $category = 'app'){
-        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_ERROR, $category);
+        \Zy::$app->getLogger()->log($log, Logger::LEVEL_ERROR, $category);
     }
 
     public static function warning($log, $category = 'app'){
-        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_WARNING, $category);
+        \Zy::$app->getLogger()->log($log, Logger::LEVEL_WARNING, $category);
     }
 
     public static function info($log, $category = 'app'){
-        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_INFO, $category);
+        \Zy::$app->getLogger()->log($log, Logger::LEVEL_INFO, $category);
     }
 
     public static function trace($log, $category = 'app'){
-        \Ziyue::$app->getLogger()->log($log, Logger::LEVEL_TRACE, $category);
+        \Zy::$app->getLogger()->log($log, Logger::LEVEL_TRACE, $category);
     }
 
     /**
@@ -79,8 +79,8 @@ class BaseZiyue
 
     public static function createComponent($name, $class = ''){
         if($class === ''){
-            if (isset(\Ziyue::$app->components[$name])){
-                $class = \Ziyue::$app->components[$name];
+            if (isset(\Zy::$app->components[$name])){
+                $class = \Zy::$app->components[$name];
             }else {
                 throw new UnknownClassException('Getting unknown class: ' . $name);
             }

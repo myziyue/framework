@@ -29,7 +29,7 @@ class Application extends Components
 
     public function __construct($config)
     {
-        \Ziyue::$app = $this;
+        \Zy::$app = $this;
         $this->preInit($config);
         $this->registerErrorHandler();
         $this->bootstrap($config);

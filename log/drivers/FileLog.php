@@ -18,7 +18,7 @@ class FileLog extends Logger
 
     public function __construct()
     {
-        self::$logDirPath = \Ziyue::$app->appPath . DIRECTORY_SEPARATOR . 'runtimes' . DIRECTORY_SEPARATOR . 'logs'
+        self::$logDirPath = \Zy::$app->appPath . DIRECTORY_SEPARATOR . 'runtimes' . DIRECTORY_SEPARATOR . 'logs'
             . DIRECTORY_SEPARATOR . date('Y-m-d') . DIRECTORY_SEPARATOR ;
         if(!file_exists(self::$logDirPath)){
             mkdir(self::$logDirPath, 0755, true);

@@ -8,9 +8,9 @@
  */
 require(__DIR__ . '/BaseZiyue.php');
 
-class Ziyue extends \ziyue\BaseZiyue
+class Zy extends \ziyue\BaseZiyue
 {
 }
 
-spl_autoload_register(['Ziyue', 'autoload'], true, true);
-Ziyue::$classMap = require(__DIR__ . '/classmap.php');
+spl_autoload_register(['Zy', 'autoload'], true, true);
+Zy::$classMap = require(__DIR__ . '/classmap.php');
