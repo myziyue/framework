@@ -14,6 +14,8 @@ use ziyue\core\ExitException;
 
 class Application extends \ziyue\core\Application
 {
+
+    public $catchAllAllowIp = ['127.0.0.1'];
     public function run()
     {
         try {
@@ -25,7 +27,7 @@ class Application extends \ziyue\core\Application
     }
 
     public function handleRequest(){
-        if($this->catchAll === null){
+        if($this->catchAll === null || in_array(\Zy::$app->request->getClientIp(), $this->catchAllAllowIp)){
             list($router, $params) = \Zy::$app->request->parseUrl();
         } else {
             $router = $this->catchAll['class'];

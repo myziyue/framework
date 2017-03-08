@@ -19,6 +19,8 @@ return [
     'ziyue\core\Components' => ZY_PATH . '/core/Components.php',
     //db
     'ziyue\db\Connection' => ZY_PATH . '/db/Connection.php',
+    'ziyue\db\adapter\Mongodb' => ZY_PATH . '/db/adapter/Mongodb.php',
+    'ziyue\db\adapter\MySql' => ZY_PATH . '/db/adapter/MySql.php',
     //log
     'ziyue\log\Logger' => ZY_PATH . '/log/Logger.php',
     'ziyue\log\drivers\DBLog' => ZY_PATH . '/log/drivers/DBLog.php',
