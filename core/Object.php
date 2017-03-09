@@ -11,6 +11,7 @@ namespace ziyue\core;
 
 use ziyue\exception\InvalidCallException;
 use ziyue\exception\UnknownPropertyException;
+use ziyue\exception\UnknownMethodException;
 
 
 class Object
