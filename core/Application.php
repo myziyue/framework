@@ -56,6 +56,9 @@ class Application extends Components
         foreach ($this->components as $id => $definition){
             $this->set($id, $definition);
         }
+
+        \Zy::setAlias('@app', $this->appPath);
+        \Zy::setAlias('@ziyue', ZY_PATH);
     }
 
     public function run(){

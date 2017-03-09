@@ -8,6 +8,7 @@
  */
 namespace ziyue;
 
+use ziyue\exception\InvalidConfigException;
 use ziyue\exception\UnknownClassException;
 use ziyue\log\Logger;
 
@@ -30,6 +31,7 @@ class BaseZiyue
      * @var array class map
      */
     public static $classMap = [];
+    private static $aliasMap = [];
 
     public static function powered(){
         return '<a href="http://framework.myziyue.com/" rel="external">MyZiyue Framework</a>';
@@ -74,9 +76,21 @@ class BaseZiyue
             if(!file_exists($classFile)){
                 throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
             }
+        }elseif(strpos($className, "\\") !== false){
+            $classNameArray = explode("\\", $className);
+            $aliasName = isset($classNameArray[0]) ? $classNameArray[0] : 'app';
+            $classNameFile = str_replace('\\', DIRECTORY_SEPARATOR, $className);
 
-            include($classFile);
-        } elseif (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
+            $classFile = \Zy::getAlias('@'. $aliasName) . str_replace($aliasName, '', $classNameFile) . '.php';
+            if(!file_exists($classFile)){
+                throw new UnknownClassException("Unable to find '$className' in file: $classFile. Namespace missing?");
+            }
+        }else {
+            return ;
+        }
+        include($classFile);
+
+        if (ZY_DEBUG && !class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
             throw new UnknownClassException("Unable to find '$className' . Namespace missing?");
         }
     }
@@ -96,5 +110,29 @@ class BaseZiyue
             throw new UnknownClassException('Getting unknown class: ' . $name . ' in file: ' . $class . '.');
         }
         return $componentObj;
+    }
+
+    public static function getAlias($aliasName){
+        if(strpos($aliasName, '@') !== 0){
+            throw new InvalidConfigException("Invalid alias ： $aliasName");
+        }
+        $aliasName = ltrim($aliasName, '@');
+        if(isset(self::$aliasMap[$aliasName])){
+            return self::$aliasMap[$aliasName];
+        }
+        throw new InvalidConfigException("Invalid alias ： $aliasName");
+    }
+
+    public static function setAlias($aliasName, $aliasPath){
+        if(strpos($aliasName, '@') !== 0){
+            throw new InvalidConfigException("Invalid alias ： $aliasName");
+        }
+        $aliasName = ltrim($aliasName, '@');
+
+        if(isset(self::$aliasMap[$aliasName])){
+            return true;
+        }
+        self::$aliasMap[$aliasName] = $aliasPath;
+        return true;
     }
 }
