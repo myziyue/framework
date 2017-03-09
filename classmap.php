@@ -19,6 +19,7 @@ return [
     'ziyue\core\Components' => ZY_PATH . '/core/Components.php',
     //db
     'ziyue\db\Connection' => ZY_PATH . '/db/Connection.php',
+    'ziyue\db\adapter\AbstractDb' => ZY_PATH . '/db/adapter/AbstractDb.php',
     'ziyue\db\adapter\Mongodb' => ZY_PATH . '/db/adapter/Mongodb.php',
     'ziyue\db\adapter\MySql' => ZY_PATH . '/db/adapter/MySql.php',
     //log

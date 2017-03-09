@@ -10,9 +10,11 @@
 namespace ziyue\db;
 
 use ziyue\core\Object;
+use ziyue\exception\InvalidConfigException;
 
 class Connection extends Object
 {
+    private static $dbInstrance = null;
     public $type = 'mysql';
     public $host = '127.0.0.1';
     public $port = '';
@@ -22,10 +24,27 @@ class Connection extends Object
     public $enableSlave = false;
     public $slaves = [];
 
-    public function getDbType(){
-        return isset($this->getAdapter()[$this->type]);
+    /**
+     * 获取db适配器类
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    public function initDb(){
+        if(!isset($this->getAdapter()[$this->type])) {
+            throw new InvalidConfigException("Unknown type : $this->type");
+        }
+        if(self::$dbInstrance === null){
+            $adapterClass = $this->getAdapter()[$this->type];
+            self::$dbInstrance = new $adapterClass();
+        }
     }
+
+    /**
+     *
+     */
     public function getMasterDb(){
+        $this->initDb();
+        return self::$dbInstrance;
 
     }
     public function getSlaveDb(){
@@ -34,8 +53,8 @@ class Connection extends Object
 
     public function getAdapter(){
         return [
-            'mysql' => ['class' => 'ziyue\db\adapter\MySql'],
-            'mongodb' => ['class' => 'ziyue\db\adapter\Mongodb']
+            'mysql' => '\ziyue\db\adapter\MySql',
+            'mongodb' => '\ziyue\db\adapter\Mongodb'
         ];
     }
 

@@ -12,5 +12,4 @@ namespace ziyue\db\adapter;
 
 class Mongodb
 {
-
 }

@@ -20,7 +20,6 @@ class Application extends \ziyue\core\Application
     {
         try {
             $this->handleRequest();
-            echo "ok";
         } catch (\Exception $ex){
             throw new ExitException($ex->getCode(), $ex->getMessage(), $ex->getCode(), $ex);
         }
