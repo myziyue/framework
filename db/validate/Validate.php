@@ -3,13 +3,14 @@
  * Created by PhpStorm.
  *
  * @author Bi Zhiming <evan2884@gmail.com>
- * @created 2017/3/8  上午11:42
+ * @created 2017/3/13  上午9:48
  * @since 1.0
  */
 
-namespace ziyue\db\adapter;
+namespace ziyue\db\validate;
 
 
-class Mongodb extends Adapter
+abstract class Validate
 {
+
 }

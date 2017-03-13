@@ -9,20 +9,63 @@
 
 namespace ziyue\db\adapter;
 
-use ziyue\core\Object;
-use ziyue\db\adapter\AbstractDb;
-
-class MySql extends AbstractDb
+class MySql extends Adapter
 {
-    /**
-     *
-     */
-    public function getMasterDb(){
-        $dbAdapterClass = $this->getDbType();
+    public $prefixTbl = '';
 
+    public function getMaster()
+    {
+        // TODO: Implement getMaster() method.
     }
-    public function getSlaveDb(){
 
+    public function getSlaves()
+    {
+        // TODO: Implement getSlaves() method.
+    }
+
+    public static function tableName()
+    {
+        // TODO: Implement tableName() method.
+    }
+
+    public static function rules()
+    {
+        // TODO: Implement rules() method.
+    }
+
+    public function select($fields = '*', $enableMaster = false)
+    {
+        // TODO: Implement select() method.
+    }
+
+    public function selectAll($fields = '*', $enableMaster = false)
+    {
+        // TODO: Implement selectAll() method.
+    }
+
+    public function update(Array $setFields, $whereFields = [])
+    {
+        // TODO: Implement update() method.
+    }
+
+    public function insert(Array $feilds)
+    {
+        // TODO: Implement insert() method.
+    }
+
+    public function delete($whereFeilds = [])
+    {
+        // TODO: Implement delete() method.
+    }
+
+    public function from($tableName)
+    {
+        // TODO: Implement from() method.
+    }
+
+    public function join($tableName, $leftJoin = true)
+    {
+        // TODO: Implement join() method.
     }
 
     public function limit($start, $size)
@@ -40,29 +83,9 @@ class MySql extends AbstractDb
         // TODO: Implement groupBy() method.
     }
 
-    public function select()
+    public function query($sql, $bind = [], $enableMaster = true)
     {
-        // TODO: Implement select() method.
-    }
-
-    public function selectAll()
-    {
-        // TODO: Implement selectAll() method.
-    }
-
-    public function update()
-    {
-        // TODO: Implement update() method.
-    }
-
-    public function insert()
-    {
-        // TODO: Implement insert() method.
-    }
-
-    public function delete()
-    {
-        // TODO: Implement delete() method.
+        // TODO: Implement query() method.
     }
 
     public function beginTransaction()
