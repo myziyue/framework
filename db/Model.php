@@ -16,9 +16,6 @@ class Model extends Object
     private static $instrance = null;
     private static $dbInstrance = null;
 
-    abstract public static function tableName();
-    abstract public function rules();
-
     /**
      * 初始化
      * @return null|Model
@@ -30,11 +27,32 @@ class Model extends Object
         return self::$instrance;
     }
 
-    public function select($feilds = '*', $dbSlave = null){
-
+    public static function tableName(){
+        throw new \Exception("Method not implemented");
+    }
+    public function rules(){
+        throw new \Exception("Method not implemented");
     }
 
-    public function query($sql){
+    public function select($fields = '*', $enableMaster = false){
 
     }
+    public function selectAll($fields = '*', $enableMaster = false){}
+    public function update(Array $setFields, $whereFields = []){}
+    public function insert(Array $feilds){}
+    public function delete($whereFeilds = []){}
+
+    public function from($tableName){}
+    public function join($tableName, $leftJoin = true){}
+    public function limit($start, $size){}
+    public function orderBy($order, $type){}
+    public function groupBy($group){}
+
+    public function query($sql, $bind = [], $enableMaster = true){
+        return false;
+    }
+
+    public function beginTransaction(){}
+    public function commitTransaction(){}
+    public function rollbackTransaction(){}
 }

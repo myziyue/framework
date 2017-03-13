@@ -16,6 +16,7 @@ class Connection extends Object
 {
     private static $dbInstrance = null;
     public $type = 'mysql';
+    public $master = [];
     public $enableSlaves = false;
     public $slaves = [];
 
