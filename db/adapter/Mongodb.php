@@ -10,6 +10,6 @@
 namespace ziyue\db\adapter;
 
 
-class Mongodb extends AbstractDb
+class Mongodb extends Adapter
 {
 }

@@ -12,5 +12,23 @@ namespace ziyue\utils;
 
 class TypeUtils
 {
+    public static function isNull($value){
+        return $value === NULL;
+    }
 
+    public static function isEmpty($value) {
+        return $value == null || empty($value);
+    }
+
+    public static function isNumber($value) {
+        return is_numeric($value);
+    }
+
+    public static function isInt($value) {
+        return self::isNumber($value) && floor($value) == $value;
+    }
+
+    public static function isFloat($value) {
+        return self::isNumber($value) && floor($value) != $value;
+    }
 }

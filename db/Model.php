@@ -15,6 +15,10 @@ class Model extends Object
 {
     private static $instrance = null;
     private static $dbInstrance = null;
+
+    abstract public static function tableName();
+    abstract public function rules();
+
     /**
      * 初始化
      * @return null|Model

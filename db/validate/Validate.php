@@ -10,7 +10,7 @@
 namespace ziyue\db\validate;
 
 
-class Validate
+abstract class Validate
 {
 
 }
