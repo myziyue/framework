@@ -16,12 +16,7 @@ class Connection extends Object
 {
     private static $dbInstrance = null;
     public $type = 'mysql';
-    public $host = '127.0.0.1';
-    public $port = '';
-    public $user = '';
-    public $password = '';
-    public $dbName = '';
-    public $enableSlave = false;
+    public $enableSlaves = false;
     public $slaves = [];
 
     /**
@@ -29,7 +24,7 @@ class Connection extends Object
      * @return mixed
      * @throws InvalidConfigException
      */
-    public function initDb(){
+    public function init(){
         if(!isset($this->getAdapter()[$this->type])) {
             throw new InvalidConfigException("Unknown type : $this->type");
         }
@@ -37,18 +32,6 @@ class Connection extends Object
             $adapterClass = $this->getAdapter()[$this->type];
             self::$dbInstrance = new $adapterClass();
         }
-    }
-
-    /**
-     *
-     */
-    public function getMasterDb(){
-        $this->initDb();
-        return self::$dbInstrance;
-
-    }
-    public function getSlaveDb(){
-
     }
 
     public function getAdapter(){

@@ -26,12 +26,6 @@ class Model extends Object
         return self::$instrance;
     }
 
-    private static function geDbInstrance(){
-        if(self::$dbInstrance == null) {
-            self::$dbInstrance = \Zy::$app->db->
-        }
-    }
-
     public function select($feilds = '*', $dbSlave = null){
 
     }
