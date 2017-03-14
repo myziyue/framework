@@ -15,8 +15,10 @@ abstract class Adapter extends Object
 {
     public $enableProf = false;
     public $enableCacheTable = false;
+    public $master = [];
+    public $slaves = [];
 
     abstract public function getMaster();
-    abstract public function getSlaves();
+    abstract public function getSlaves($slaveDbId = 1);
     abstract public function getSlaveNum();
 }

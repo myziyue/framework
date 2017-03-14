@@ -32,7 +32,9 @@ class Connection extends Object
 
         if(self::$dbInstrance === null){
             $adapterClass = $this->getAdapter()[$this->type];
-            self::$dbInstrance = new $adapterClass();
+            self::$dbInstrance = \Zy::createComponent($adapterClass, $adapterClass);
+            self::$dbInstrance->master = $this->master;
+            self::$dbInstrance->slaves = $this->slaves;
         }
     }
 

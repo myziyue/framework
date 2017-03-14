@@ -22,6 +22,11 @@ return [
     'ziyue\db\adapter\AbstractDb' => ZY_PATH . '/db/adapter/AbstractDb.php',
     'ziyue\db\adapter\Mongodb' => ZY_PATH . '/db/adapter/Mongodb.php',
     'ziyue\db\adapter\MySql' => ZY_PATH . '/db/adapter/MySql.php',
+    'ziyue\db\ext\Base' => ZY_PATH . '/db/ext/Base.php',
+    'ziyue\db\ext\DeleteModel' => ZY_PATH . '/db/ext/DeleteModel.php',
+    'ziyue\db\ext\InsertModel' => ZY_PATH . '/db/ext/InsertModel.php',
+    'ziyue\db\ext\SelectModel' => ZY_PATH . '/db/ext/SelectModel.php',
+    'ziyue\db\ext\UpdateModel' => ZY_PATH . '/db/ext/UpdateModel.php',
     //log
     'ziyue\log\Logger' => ZY_PATH . '/log/Logger.php',
     'ziyue\log\drivers\DBLog' => ZY_PATH . '/log/drivers/DBLog.php',

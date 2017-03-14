@@ -18,13 +18,13 @@ class MySql extends Adapter
         // TODO: Implement getMaster() method.
     }
 
-    public function getSlaves()
+    public function getSlaves($slaveDbId = 1)
     {
         // TODO: Implement getSlaves() method.
     }
 
     public function getSlaveNum()
     {
-        return 1;
+        return sizeof($this->slaves);
     }
 }
