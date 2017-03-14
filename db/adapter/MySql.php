@@ -12,4 +12,19 @@ namespace ziyue\db\adapter;
 class MySql extends Adapter
 {
     public $prefixTbl = '';
+
+    public function getMaster()
+    {
+        // TODO: Implement getMaster() method.
+    }
+
+    public function getSlaves()
+    {
+        // TODO: Implement getSlaves() method.
+    }
+
+    public function getSlaveNum()
+    {
+        return 1;
+    }
 }

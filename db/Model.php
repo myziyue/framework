@@ -14,7 +14,13 @@ use ziyue\core\Object;
 class Model extends Object
 {
     private static $instrance = null;
-    private static $dbInstrance = null;
+    private $dbInstrance = null;
+    private $select = '*';
+    private $where = '';
+    private $joinTable = [];
+    private $multipleRows = false;
+    public $cacheHandler = 'file';
+    public $enableCache = false;
 
     /**
      * 初始化
@@ -27,6 +33,14 @@ class Model extends Object
         return self::$instrance;
     }
 
+    private function getDbInstrance($enableMaster){
+        if($enableMaster) {
+            $this->dbInstrance = \Zy::$app->db->getMaster();
+        } else {
+            $this->dbInstrance = \Zy::$app->db->getSlaver();
+        }
+    }
+
     public static function tableName(){
         throw new \Exception("Method not implemented");
     }
@@ -35,14 +49,23 @@ class Model extends Object
     }
 
     public function select($fields = '*', $enableMaster = false){
-
+        $this->select = $fields;
+        $this->getDbInstrance($enableMaster);
+        $this->multipleRows = false;
     }
-    public function selectAll($fields = '*', $enableMaster = false){}
+    public function selectAll($fields = '*', $enableMaster = false){
+        $this->select = $fields;
+        $this->getDbInstrance($enableMaster);
+        $this->multipleRows = true;
+    }
     public function update(Array $setFields, $whereFields = []){}
     public function insert(Array $feilds){}
     public function delete($whereFeilds = []){}
 
-    public function from($tableName){}
+    public function from($tableName = ''){}
+    public function where($data = []) {
+
+    }
     public function join($tableName, $leftJoin = true){}
     public function limit($start, $size){}
     public function orderBy($order, $type){}

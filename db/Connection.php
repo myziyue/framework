@@ -29,10 +29,28 @@ class Connection extends Object
         if(!isset($this->getAdapter()[$this->type])) {
             throw new InvalidConfigException("Unknown type : $this->type");
         }
+
         if(self::$dbInstrance === null){
             $adapterClass = $this->getAdapter()[$this->type];
             self::$dbInstrance = new $adapterClass();
         }
+    }
+
+    public function getMaster(){
+        $this->init();
+        return self::$dbInstrance->getMaster();
+    }
+
+    public function getSlaver($slaveDbId = ''){
+        $this->init();
+        if($slaveDbId == '') {
+            $slaveDbId = $this->getSlaveId();
+        }
+        return self::$dbInstrance->getSlaves($slaveDbId);
+    }
+
+    public function getSlaveId(){
+        return rand(1, self::$dbInstrance->getSlaveNum());
     }
 
     public function getAdapter(){
