@@ -12,10 +12,6 @@ namespace ziyue\db;
 use ziyue\core\Object;
 use ziyue\exception\InvalidConfigException;
 use ziyue\utils\TypeUtils;
-use ziyue\db\ext\SelectModel;
-use ziyue\db\ext\UpdateModel;
-use ziyue\db\ext\InsertModel;
-use ziyue\db\ext\DeleteModel;
 
 
 class Model extends Object
@@ -33,6 +29,10 @@ class Model extends Object
      */
     private $dbInstrance = null;
     /**
+     * @var null 表名
+     */
+    private $tblName = null;
+    /**
      * @var string 当前sql类型
      */
     private $sqlType = 'SELECT';
@@ -44,6 +44,22 @@ class Model extends Object
      * @var string where条件
      */
     private $where = '';
+    /**
+     * @var array 绑定条件
+     */
+    private $binData = [];
+    /**
+     * @var string group by条件
+     */
+    private $groupBy = '';
+    /**
+     * @var string order by条件
+     */
+    private $orderBy = '';
+    /**
+     * @var string limit条件
+     */
+    private $limit = '';
     /**
      * @var array 连表查询
      */
@@ -72,10 +88,10 @@ class Model extends Object
     }
 
     public static function tableName(){
-        throw new \Exception("Method not implemented");
+        throw new \Exception("Method '" . __FUNCTION__ . "' not implemented");
     }
     public function rules(){
-        throw new \Exception("Method not implemented");
+        throw new \Exception("Method '" . __FUNCTION__ . "' not implemented");
     }
 
     public function select($fields = '*', $enableMaster = false){
@@ -83,7 +99,8 @@ class Model extends Object
         // todo : 字段验证
         $this->getDbInstrance($enableMaster);
         $this->multipleRows = false;
-        echo $sql = $this->buildSql();
+        $sql = $this->buildSql();
+        \Zy::p($sql);
     }
     public function selectAll($fields = '*', $enableMaster = false){
         $this->select = $fields;
@@ -95,7 +112,21 @@ class Model extends Object
     public function insert(Array $feilds){}
     public function delete($whereFeilds = []){}
 
-    public function from($tableName = ''){}
+    /**
+     * @param $tableName
+     * @return null|Model
+     */
+    public function from($tableName) {
+        $this->tblName = $tableName;
+        return static::model();
+    }
+
+    /**
+     * @param array $data
+     * @param string $type
+     * @return bool|null|Model
+     * @throws InvalidConfigException
+     */
     public function where(Array $data, $type = 'AND') {
         if(TypeUtils::isEmpty($data)) {
             return false;
@@ -107,11 +138,13 @@ class Model extends Object
         foreach ($data as $feild => $value){
             $this->where .= ($this->where ? " $type (" : ' (');
             if(is_array($value)){
-                $this->where .= $feild . ' in (:' . preg_replace("/.*[.]/", '', $value, 1) . '))';
+                $this->where .= $feild . ' in (:' . preg_replace("/.*[.]/", '', $feild, 1) . '))';
             } else {
-                $this->where .= $feild . ' = :' . preg_replace("/.*[.]/", '', $value, 1) . ')';
+                $this->where .= $feild . ' = :' . preg_replace("/.*[.]/", '', $feild, 1) . ')';
             }
         }
+        $this->binData = $data;
+        return static::model();
     }
     public function andWhere(Array $data) {
         $this->where($data);
@@ -121,9 +154,39 @@ class Model extends Object
     }
 
     public function join($tableName, $leftJoin = true){}
-    public function limit($start, $size){}
-    public function orderBy($order, $type){}
-    public function groupBy($group){}
+
+    public function limit($limitOffset = 0, $limitSize = 1){
+        if($limitOffset < 0) {
+            $limitOffset = 0;
+        }
+        if($limitSize <= 0){
+            $limitSize = 1;
+        }
+        $this->binData[] = ['limit_offset' => $limitOffset, 'limit_size' => $limitSize];
+        $this->limit = "LIMIT :limit_offset,:limit_size";
+        return static::model();
+    }
+    public function orderBy(Array $orderBy = []){
+        foreach($orderBy as $order => $type) {
+            //TODO ： order字段判断
+            if(in_array(strtoupper($type), ['DESC', 'ASC'])){
+                $order = str_replace('.', '_', $order);
+                $this->binData[] = ["orderby_$order" => $order];
+                $this->orderBy .= ($this->orderBy ? ',' : '') . ":orderby_$order $type";
+            } else {
+                throw new InvalidConfigException("Invalid Order by type '$type'");
+            }
+        }
+        return static::model();
+    }
+    public function groupBy(Array $groupBy = []){
+        foreach($groupBy as $group) {
+            //TODO ： order字段判断
+            $group = str_replace('.', '_', $group);
+           $this->groupBy .= ($this->groupBy ? ',' : '') . " $group";
+        }
+        return static::model();
+    }
 
     public function query($sql, $bind = [], $enableMaster = true){
         return false;
@@ -133,11 +196,59 @@ class Model extends Object
         if(!in_array($this->sqlType, $this->sqlTypes)){
             throw new InvalidConfigException("Invalid Type '$this->sqlType'");
         }
-        $modelName = '\\ziyue\\db\\ext\\' . ucfirst(strtolower($this->sqlType)) . 'Model';
-        return \Zy::createComponent($modelName, $modelName)->buildSql();
+        $modelName = '\\ziyue\\db\\ext\\' . strtolower(\Zy::$app->db->type) . '\\' . ucfirst(strtolower($this->sqlType)) . 'Model';
+        return \Zy::createComponent($modelName, $modelName)->buildSql(static::model());
     }
 
     public function beginTransaction(){}
     public function commitTransaction(){}
     public function rollbackTransaction(){}
+
+    /**
+     * @return string
+     */
+    public function getSelect()
+    {
+        return $this->select;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWhere()
+    {
+        return $this->where;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTableName()
+    {
+        return $this->tblName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupBy()
+    {
+        return $this->groupBy ? ' GROUP BY ' . $this->groupBy : '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderBy()
+    {
+        return $this->orderBy ? ' ORDER BY ' . $this->orderBy : '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
 }

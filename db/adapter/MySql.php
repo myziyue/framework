@@ -11,11 +11,14 @@ namespace ziyue\db\adapter;
 
 class MySql extends Adapter
 {
-    public $prefixTbl = '';
+    private $dsn = null;
+    public $tblPrefix = '';
+    public $master = [];
+    public $enableSlaves = false;
+    public $slaves = [];
 
     public function getMaster()
     {
-        // TODO: Implement getMaster() method.
     }
 
     public function getSlaves($slaveDbId = 1)

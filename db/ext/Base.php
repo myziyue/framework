@@ -11,5 +11,5 @@ namespace ziyue\db\ext;
 
 abstract class Base
 {
-    abstract public function buildSql();
+    abstract public function buildSql($model);
 }
