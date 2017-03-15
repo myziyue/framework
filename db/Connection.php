@@ -40,7 +40,8 @@ class Connection extends Object
 
     public function getMaster(){
         $this->init();
-        return self::$dbInstrance->getMaster();
+        self::$dbInstrance->getMaster();
+        return self::$dbInstrance;
     }
 
     public function getSlaver($slaveDbId = ''){
@@ -48,7 +49,8 @@ class Connection extends Object
         if($slaveDbId == '') {
             $slaveDbId = $this->getSlaveId();
         }
-        return self::$dbInstrance->getSlaves($slaveDbId);
+        self::$dbInstrance->getSlaves($slaveDbId);
+        return self::$dbInstrance;
     }
 
     public function getSlaveId(){
