@@ -16,6 +16,9 @@ class SelectModel extends Base
     public function buildSql($model)
     {
         $sql = 'SELECT ' . $model->getSelect() . ' FROM ' . $model->getTableName();
+        foreach($model->getJoinTable() as $tbl){
+            $sql .= ' ' . $tbl;
+        }
         if($model->getWhere()) {
             $sql .= ' WHERE ' . $model->getWhere();
         }

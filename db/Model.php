@@ -10,7 +10,7 @@
 namespace ziyue\db;
 
 use ziyue\core\Object;
-use ziyue\exception\InvalidConfigException;
+use ziyue\exception\InvalidValueException;
 use ziyue\utils\TypeUtils;
 
 
@@ -132,7 +132,7 @@ class Model extends Object
             return false;
         }
         if(!in_array($type = strtoupper($type), ['AND', 'OR'])){
-            throw new InvalidConfigException("Invalid Type '$type'");
+            throw new InvalidValueException("Invalid Type '$type'");
         }
 
         foreach ($data as $feild => $value){
@@ -153,7 +153,21 @@ class Model extends Object
         $this->where($data, 'OR');
     }
 
-    public function join($tableName, $leftJoin = true){}
+    public function join($tableName, $leftJoin = true){
+        if(preg_match_all('/{{%([a-zA-Z_]+)}}(\s+)(AS|as){1}(\s+)([a-zA-Z_]+)(\s)(ON|on){1}(\s)([a-zA-Z_]+(.){1}[a-zA-Z_]+(=){1}[a-zA-Z_]+(.){1}[a-zA-Z_]+)/', $tableName)){
+            $joinType = $leftJoin ? 'LEFT' : 'RIGHT';
+            $this->joinTable[] = "$joinType JOIN " . $tableName;
+        } else {
+            throw new InvalidValueException("Invalid table name '$tableName'");
+        }
+        return static::model();
+    }
+    public function leftJoin($tableName) {
+        return $this->join($tableName, true);
+    }
+    public function rightJoin($tableName) {
+        return $this->join($tableName, false);
+    }
 
     public function limit($limitOffset = 0, $limitSize = 1){
         if($limitOffset < 0) {
@@ -174,7 +188,7 @@ class Model extends Object
                 $this->binData[] = ["orderby_$order" => $order];
                 $this->orderBy .= ($this->orderBy ? ',' : '') . ":orderby_$order $type";
             } else {
-                throw new InvalidConfigException("Invalid Order by type '$type'");
+                throw new InvalidValueException("Invalid Order by type '$type'");
             }
         }
         return static::model();
@@ -226,6 +240,14 @@ class Model extends Object
     public function getTableName()
     {
         return $this->tblName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getJoinTable()
+    {
+        return $this->joinTable;
     }
 
     /**
