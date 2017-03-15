@@ -19,15 +19,21 @@ class MySql extends Adapter
 
     public function getMaster()
     {
+        return new self();
     }
 
     public function getSlaves($slaveDbId = 1)
     {
-        // TODO: Implement getSlaves() method.
+        return new self();
     }
 
     public function getSlaveNum()
     {
         return sizeof($this->slaves);
+    }
+
+    public function query($sql, Array $bind = []){
+        \Zy::p($sql);
+        \Zy::p($bind);
     }
 }

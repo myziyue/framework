@@ -97,20 +97,17 @@ class Model extends Object
     public function select($fields = '*', $enableMaster = false){
         $this->select = $fields;
         // todo : 字段验证
-        $this->getDbInstrance($enableMaster);
         $this->multipleRows = false;
         $sql = $this->buildSql();
-        \Zy::p($sql);
+        return $this->query($sql, $this->binData, $enableMaster);
     }
     public function selectAll($fields = '*', $enableMaster = false){
         $this->select = $fields;
         // todo : 字段验证
-        $this->getDbInstrance($enableMaster);
         $this->multipleRows = true;
+        $sql = $this->buildSql();
+        return $this->query($sql, $this->binData, $enableMaster);
     }
-    public function update(Array $setFields){}
-    public function insert(Array $feilds){}
-    public function delete($whereFeilds = []){}
 
     /**
      * @param $tableName
@@ -176,7 +173,8 @@ class Model extends Object
         if($limitSize <= 0){
             $limitSize = 1;
         }
-        $this->binData[] = ['limit_offset' => $limitOffset, 'limit_size' => $limitSize];
+        $this->binData['limit_offset'] = $limitOffset;
+        $this->binData['limit_size'] = $limitSize;
         $this->limit = "LIMIT :limit_offset,:limit_size";
         return static::model();
     }
@@ -185,8 +183,7 @@ class Model extends Object
             //TODO ： order字段判断
             if(in_array(strtoupper($type), ['DESC', 'ASC'])){
                 $order = str_replace('.', '_', $order);
-                $this->binData[] = ["orderby_$order" => $order];
-                $this->orderBy .= ($this->orderBy ? ',' : '') . ":orderby_$order $type";
+                $this->orderBy .= ($this->orderBy ? ',' : '') . "$order $type";
             } else {
                 throw new InvalidValueException("Invalid Order by type '$type'");
             }
@@ -202,16 +199,23 @@ class Model extends Object
         return static::model();
     }
 
-    public function query($sql, $bind = [], $enableMaster = true){
-        return false;
-    }
-
     private function buildSql(){
         if(!in_array($this->sqlType, $this->sqlTypes)){
             throw new InvalidConfigException("Invalid Type '$this->sqlType'");
         }
         $modelName = '\\ziyue\\db\\ext\\' . strtolower(\Zy::$app->db->type) . '\\' . ucfirst(strtolower($this->sqlType)) . 'Model';
         return \Zy::createComponent($modelName, $modelName)->buildSql(static::model());
+    }
+
+    public function update(Array $setFields){
+        
+    }
+    public function insert(Array $feilds){}
+    public function delete($whereFeilds = []){}
+
+    public function query($sql, $bind = [], $enableMaster = true){
+        $this->getDbInstrance($enableMaster);
+        return $this->dbInstrance->query($sql, $bind);
     }
 
     public function beginTransaction(){}
