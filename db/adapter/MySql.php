@@ -77,7 +77,7 @@ class MySql extends Adapter
         }
 
         if($this->getSqlType($sql) == 'select'){
-            $result = $prepare->fetch(\PDO::FETCH_ASSOC);
+            $result = $prepare->fetchAll(\PDO::FETCH_ASSOC);
         } elseif($this->getSqlType($sql) == 'insert') {
             $result = self::$instrance->lastInsertId();
         } else {

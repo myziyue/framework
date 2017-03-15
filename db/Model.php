@@ -64,7 +64,6 @@ class Model extends Object
      * @var array 连表查询
      */
     private $joinTable = [];
-    private $multipleRows = false;
     public $cacheHandler = 'file';
     public $enableCache = false;
 
@@ -97,19 +96,20 @@ class Model extends Object
     public function select($fields = '*', $enableMaster = false){
         $this->select = $fields;
         // todo : 字段验证
-        $this->multipleRows = false;
+        $this->limit = " LIMIT 1";
         $sql = $this->buildSql();
-        return $this->query($sql, $this->binData, $enableMaster);
+        $data = $this->query($sql, $this->binData, $enableMaster);
+        return isset($data[0]) ? $data[0] : $data;
     }
     public function selectAll($fields = '*', $enableMaster = false){
         $this->select = $fields;
         // todo : 字段验证
-        $this->multipleRows = true;
         $sql = $this->buildSql();
         return $this->query($sql, $this->binData, $enableMaster);
     }
 
     /**
+     * from
      * @param $tableName
      * @return null|Model
      */
@@ -119,6 +119,7 @@ class Model extends Object
     }
 
     /**
+     * where
      * @param array $data
      * @param string $type
      * @return bool|null|Model
@@ -150,6 +151,13 @@ class Model extends Object
         $this->where($data, 'OR');
     }
 
+    /**
+     * join
+     * @param $tableName
+     * @param bool $leftJoin
+     * @return null|Model
+     * @throws InvalidValueException
+     */
     public function join($tableName, $leftJoin = true){
         if(preg_match_all('/{{%([a-zA-Z_]+)}}(\s+)(AS|as){1}(\s+)([a-zA-Z_]+)(\s)(ON|on){1}(\s)([a-zA-Z_]+(.){1}[a-zA-Z_]+(=){1}[a-zA-Z_]+(.){1}[a-zA-Z_]+)/', $tableName)){
             $joinType = $leftJoin ? 'LEFT' : 'RIGHT';
@@ -166,6 +174,12 @@ class Model extends Object
         return $this->join($tableName, false);
     }
 
+    /**
+     * limit
+     * @param int $limitOffset
+     * @param int $limitSize
+     * @return null|Model
+     */
     public function limit($limitOffset = 0, $limitSize = 1){
         if($limitOffset < 0) {
             $limitOffset = 0;
@@ -173,9 +187,7 @@ class Model extends Object
         if($limitSize <= 0){
             $limitSize = 1;
         }
-        $this->binData['limit_offset'] = $limitOffset;
-        $this->binData['limit_size'] = $limitSize;
-        $this->limit = "LIMIT :limit_offset,:limit_size";
+        $this->limit = ' LIMIT ' . intval($limitOffset) . ',' . intval($limitSize);
         return static::model();
     }
     public function orderBy(Array $orderBy = []){
@@ -208,7 +220,7 @@ class Model extends Object
     }
 
     public function update(Array $setFields){
-        
+
     }
     public function insert(Array $feilds){}
     public function delete($whereFeilds = []){}
