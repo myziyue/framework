@@ -230,9 +230,18 @@ class Model extends Object
         return $this->dbInstrance->query($sql, $bind);
     }
 
-    public function beginTransaction(){}
-    public function commitTransaction(){}
-    public function rollbackTransaction(){}
+    public function beginTransaction(){
+        $this->getDbInstrance(true);
+        $this->dbInstrance->beginTransaction();
+    }
+    public function commitTransaction(){
+        $this->getDbInstrance(true);
+        $this->dbInstrance->commit();
+    }
+    public function rollbackTransaction(){
+        $this->getDbInstrance(true);
+        $this->dbInstrance->rollBack();
+    }
 
     /**
      * @return string
