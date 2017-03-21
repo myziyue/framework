@@ -105,7 +105,7 @@ class Model extends Object
     public function selectAll($fields = '*', $enableMaster = false){
         $this->select = $fields;
         // todo : 字段验证
-        $sql = $this->buildSql($t);
+        $sql = $this->buildSql();
         return $this->query($sql, $this->binData, $enableMaster);
     }
 
