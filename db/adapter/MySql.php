@@ -67,6 +67,7 @@ class MySql extends Adapter
         $prepare = self::$instrance->prepare($sql);
         foreach($bind as $feild => $value){
             $feild = ':' . $feild;
+            // todo : 类型判断
             $prepare->bindValue($feild, intval($value));
         }
         $prepare->execute();
@@ -81,9 +82,9 @@ class MySql extends Adapter
         } elseif($this->getSqlType($sql) == 'insert') {
             $result = self::$instrance->lastInsertId();
         } else {
-            $result = self::$instrance->rowCount();
+            $result = $prepare->rowCount();
         }
-//        \Zy::p($sql);
+        \Zy::p($sql);
 //        \Zy::p($result);
         return $result;
     }

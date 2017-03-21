@@ -64,6 +64,7 @@ class Model extends Object
      * @var array 连表查询
      */
     private $joinTable = [];
+    private $updateFeilds = [];
     public $cacheHandler = 'file';
     public $enableCache = false;
 
@@ -104,7 +105,7 @@ class Model extends Object
     public function selectAll($fields = '*', $enableMaster = false){
         $this->select = $fields;
         // todo : 字段验证
-        $sql = $this->buildSql();
+        $sql = $this->buildSql($t);
         return $this->query($sql, $this->binData, $enableMaster);
     }
 
@@ -220,7 +221,13 @@ class Model extends Object
     }
 
     public function update(Array $setFields){
-
+        $this->sqlType = 'UPDATE';
+        $this->updateFeilds = $setFields;
+        $this->binData = array_merge($this->binData, $setFields);
+        // todo : 字段验证
+        $sql = $this->buildSql();
+        $data = $this->query($sql, $this->binData, true);
+        return isset($data[0]) ? $data[0] : $data;
     }
     public function insert(Array $feilds){}
     public function delete($whereFeilds = []){}
@@ -297,5 +304,13 @@ class Model extends Object
     public function getLimit()
     {
         return $this->limit;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUpdateFeilds()
+    {
+        return $this->updateFeilds;
     }
 }
