@@ -64,7 +64,14 @@ class Model extends Object
      * @var array 连表查询
      */
     private $joinTable = [];
+    /**
+     * @var array 更新字段
+     */
     private $updateFeilds = [];
+    /**
+     * @var array 添加字段
+     */
+    private $insertFeilds = [];
     public $cacheHandler = 'file';
     public $enableCache = false;
 
@@ -220,6 +227,11 @@ class Model extends Object
         return \Zy::createComponent($modelName, $modelName)->buildSql(static::model());
     }
 
+    /**
+     * 更新
+     * @param array $setFields
+     * @return mixed
+     */
     public function update(Array $setFields){
         $this->sqlType = 'UPDATE';
         $this->updateFeilds = $setFields;
@@ -229,7 +241,37 @@ class Model extends Object
         $data = $this->query($sql, $this->binData, true);
         return isset($data[0]) ? $data[0] : $data;
     }
-    public function insert(Array $feilds){}
+
+    /**
+     *  单条记录添加
+     * @param array $feilds
+     * @return mixed
+     */
+    public function insert(Array $feilds){
+        $this->sqlType = 'INSERT';
+        $this->insertFeilds = array_keys($feilds);
+        $this->binData = [$feilds];
+        // todo : 字段验证
+        $sql = $this->buildSql();
+        $data = $this->query($sql, $this->binData, true);
+        return isset($data[0]) ? $data[0] : $data;
+    }
+
+    /**
+     * 多条记录添加
+     * @param array $feilds
+     * @return mixed
+     */
+    public function insertRows(Array $feilds){
+        $this->sqlType = 'INSERT';
+        $this->insertFeilds = array_keys($feilds);;
+        $this->binData = $feilds;
+        // todo : 字段验证
+        $sql = $this->buildSql();
+        $data = $this->query($sql, $this->binData, true);
+        return isset($data[0]) ? $data[0] : $data;
+    }
+
     public function delete($whereFeilds = []){}
 
     public function query($sql, $bind = [], $enableMaster = true){
@@ -312,5 +354,25 @@ class Model extends Object
     public function getUpdateFeilds()
     {
         return $this->updateFeilds;
+    }
+
+    /**
+     * @return array
+     */
+    public function getInsertFeilds()
+    {
+        return $this->insertFeilds;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBinData()
+    {
+        return $this->binData;
+    }
+
+    public function setBinData($bindData) {
+        $this->binData = $bindData;
     }
 }
