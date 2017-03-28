@@ -84,7 +84,7 @@ class MySql extends Adapter
         } else {
             $result = $prepare->rowCount();
         }
-        \Zy::p($sql);
+//        \Zy::p($sql);
 //        \Zy::p($result);
         return $result;
     }

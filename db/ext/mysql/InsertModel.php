@@ -22,16 +22,25 @@ class InsertModel extends Base
         if(!$model->getInsertFeilds() || !$model->getBinData()){
             throw new InvalidValueException("Invalid Insert feilds");
         } else {
-            $sql .= ' ( ' . implode(',', array_keys($model->getInsertFeilds())) . ') values (';
+            $sql .= ' ( ' . implode(',',$model->getInsertFeilds()) . ')';
             $updateArr = [];
             $bindData = [];
+            $sqlSplit = 'value';
             foreach($model->getBinData() as $key => $insertRows){
-                foreach ($insertRows as $feild => $value) {
-                    $bindData[][$feild. '_' . $key] = $value;
+                $data = [];
+                if(is_array($insertRows)) {
+                    foreach ($insertRows as $feild => $value) {
+                        $data[] = ':' . $feild. '_' . $key;
+                        $bindData[$feild. '_' . $key] = $value;
+                    }
+                    $updateArr[] = "(" . implode(",", $data) . ")";
+                    $sqlSplit = 'values';
+                } else {
+                    $updateArr[] = ':' . $key;
+                    $bindData[$key] = $insertRows;
                 }
-                $updateArr[] = '(' . implode(',', array_keys($insertRows)) . ')';
             }
-            $sql .= implode(',', $updateArr) . ')';
+            $sql .= $sqlSplit == 'value' ? ' value (' . implode(',', $updateArr) . ')' : ' values ' .implode(',', $updateArr);
             $model->setBinData($bindData);
         }
         return $sql;

@@ -249,8 +249,8 @@ class Model extends Object
      */
     public function insert(Array $feilds){
         $this->sqlType = 'INSERT';
-        $this->insertFeilds = array_keys($feilds);
-        $this->binData = [$feilds];
+        $this->insertFeilds = is_array(current($feilds)) ? array_keys(current($feilds)) : array_keys($feilds);
+        $this->binData = $feilds;
         // todo : 字段验证
         $sql = $this->buildSql();
         $data = $this->query($sql, $this->binData, true);
