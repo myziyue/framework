@@ -16,6 +16,11 @@ class DeleteModel extends Base
 
     public function buildSql($model)
     {
-        // TODO: Implement buildSql() method.
+        $sql = 'DELETE FROM ' . $model->getTableName();
+        
+        if($model->getWhere()) {
+            $sql .= ' WHERE ' . $model->getWhere();
+        }
+        return $sql;
     }
 }

@@ -254,11 +254,11 @@ class Model extends Object
         // todo : 字段验证
         $sql = $this->buildSql();
         $data = $this->query($sql, $this->binData, true);
-        return isset($data[0]) ? $data[0] : $data;
+        return (is_array($data) && isset($data[0])) ? $data[0] : $data;
     }
 
     /**
-     * 多条记录添加
+     * 单条／多条记录添加
      * @param array $feilds
      * @return mixed
      */
@@ -269,10 +269,16 @@ class Model extends Object
         // todo : 字段验证
         $sql = $this->buildSql();
         $data = $this->query($sql, $this->binData, true);
-        return isset($data[0]) ? $data[0] : $data;
+        return (is_array($data) && isset($data[0])) ? $data[0] : $data;
     }
 
-    public function delete($whereFeilds = []){}
+    public function delete(){
+        $this->sqlType = 'DELETE';
+        // TODO 字段验证
+        $sql = $this->buildSql();
+        $data = $this->query($sql, $this->binData, true);
+        return (is_array($data) && isset($data[0])) ? $data[0] : $data;
+    }
 
     public function query($sql, $bind = [], $enableMaster = true){
         $this->getDbInstrance($enableMaster);

@@ -27,29 +27,31 @@ class MySql extends Adapter
 
     public function getMaster()
     {
-        if(self::$instrance == null){
+        if (self::$instrance == null) {
             $this->getPdoParams($this->master);
             self::$instrance = new \PDO($this->dsn, $this->user, $this->password);
         }
     }
 
-    private function getPdoParams($pdoParams){
-        if(isset($pdoParams['tblPrefix'])){
+    private function getPdoParams($pdoParams)
+    {
+        if (isset($pdoParams['tblPrefix'])) {
             $this->tblPrefix = trim($pdoParams['tblPrefix']);
             unset($pdoParams['tblPrefix']);
         }
-        if($diff = array_diff(array_keys($pdoParams), $this->pdoParams)) {
+        if ($diff = array_diff(array_keys($pdoParams), $this->pdoParams)) {
             throw new InvalidConfigException("Invalid Config '" . implode(',', $diff) . "'");
         }
-        $this->dsn = 'mysql:host=' . $pdoParams['host'] . ';dbname=' .  $pdoParams['dbName'];
+        $this->dsn = 'mysql:host=' . $pdoParams['host'] . ';dbname=' . $pdoParams['dbName'];
         $this->user = $pdoParams['user'];
         $this->password = $pdoParams['password'];
         $this->charset = $pdoParams['charset'];
     }
+
     public function getSlaves($slaveDbId = 1)
     {
-        if(self::$instrance == null){
-            $this->getPdoParams($this->slaves[$slaveDbId-1]);
+        if (self::$instrance == null) {
+            $this->getPdoParams($this->slaves[$slaveDbId - 1]);
             self::$instrance = new \PDO($this->dsn, $this->user, $this->password);
             self::$instrance->exec('SET character_set_connection=' . $this->charset . ', character_set_results=' . $this->charset . ', character_set_client=binary');
         }
@@ -60,12 +62,13 @@ class MySql extends Adapter
         return sizeof($this->slaves);
     }
 
-    public function query($sql, Array $bind = []){
+    public function query($sql, Array $bind = [])
+    {
         $sql = str_replace('{{%', $this->tblPrefix, $sql);
         $sql = str_replace('}}', '', $sql);
 
         $prepare = self::$instrance->prepare($sql);
-        foreach($bind as $feild => $value){
+        foreach ($bind as $feild => $value) {
             $feild = ':' . $feild;
             // todo : 类型判断
             $prepare->bindValue($feild, intval($value));
@@ -73,30 +76,32 @@ class MySql extends Adapter
         $prepare->execute();
 
         // exception
-        if('00000' !== $prepare->errorCode()){
+        if ('00000' !== $prepare->errorCode()) {
             throw new ErrorException("SQL error : $sql ." . $prepare->errorInfo()[2]);
         }
 
-        if($this->getSqlType($sql) == 'select'){
+        if ($this->getSqlType($sql) == 'select') {
             $result = $prepare->fetchAll(\PDO::FETCH_ASSOC);
-        } elseif($this->getSqlType($sql) == 'insert') {
+        } elseif ($this->getSqlType($sql) == 'insert') {
             $result = self::$instrance->lastInsertId();
         } else {
             $result = $prepare->rowCount();
         }
 //        \Zy::p($sql);
 //        \Zy::p($result);
+//        \Zy::p($this->getSqlType($sql));
         return $result;
     }
 
-    private function getSqlType($sql){
-        if(false !== strpos(strtolower($sql), 'select')){
+    private function getSqlType($sql)
+    {
+        if (0 === strpos(strtolower($sql), 'select')) {
             return 'select';
         }
-        if(false !== strpos(strtolower($sql), 'update')){
+        if (0 === strpos(strtolower($sql), 'update')) {
             return 'update';
         }
-        if(false !== strpos(strtolower($sql), 'insert')){
+        if (0 === strpos(strtolower($sql), 'insert')) {
             return 'insert';
         }
     }
