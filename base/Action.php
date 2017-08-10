@@ -7,10 +7,10 @@
  * @since 1.0
  */
 
-namespace ziyue\core;
+namespace ziyue\base;
 
 
-class Controller extends Object
+class Action extends Object
 {
 
 }

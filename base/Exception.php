@@ -7,7 +7,7 @@
  * @since 1.0
  */
 
-namespace ziyue\core;
+namespace ziyue\base;
 
 
 class Exception extends \Exception

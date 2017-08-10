@@ -38,19 +38,19 @@ class BaseZiyue
     }
 
     public static function error($log, $category = 'app'){
-        \Zy::$app->getLogger()->log($log, Logger::LEVEL_ERROR, $category);
+        \Zy::$app->getLogger()->write($log, Logger::LEVEL_ERROR, $category);
     }
 
     public static function warning($log, $category = 'app'){
-        \Zy::$app->getLogger()->log($log, Logger::LEVEL_WARNING, $category);
+        \Zy::$app->getLogger()->write($log, Logger::LEVEL_WARNING, $category);
     }
 
     public static function info($log, $category = 'app'){
-        \Zy::$app->getLogger()->log($log, Logger::LEVEL_INFO, $category);
+        \Zy::$app->getLogger()->write($log, Logger::LEVEL_INFO, $category);
     }
 
     public static function trace($log, $category = 'app'){
-        \Zy::$app->getLogger()->log($log, Logger::LEVEL_TRACE, $category);
+        \Zy::$app->getLogger()->write($log, Logger::LEVEL_TRACE, $category);
     }
 
     /**

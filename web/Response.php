@@ -9,7 +9,7 @@
 
 namespace ziyue\web;
 
-use ziyue\core\Object;
+use ziyue\base\Object;
 
 class Response extends Object
 {

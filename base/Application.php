@@ -8,7 +8,7 @@
  * @since 1.0
  */
 
-namespace ziyue\core;
+namespace ziyue\base;
 
 use ziyue\db\Connection;
 use ziyue\exception\NotFoundHttpException;
@@ -126,8 +126,8 @@ class Application extends Components
      */
     public function coreComponents() {
         return [
-            'errorHandler' => ['class' => 'ziyue\core\ErrorHandler'],
-            'logger' => ['class' => 'ziyue\log\Logger']
+            'errorHandler' => ['class' => 'ziyue\base\ErrorHandler'],
+            'logger' => ['class' => 'ziyue\log\Connection']
         ];
     }
 }

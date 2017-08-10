@@ -11,7 +11,16 @@ namespace ziyue\log\drivers;
 
 use ziyue\log\Logger;
 
-class RedisLog extends Logger
+class RedisLog implements Logger
 {
 
+    /**
+     * 写日志
+     * @param $log
+     * @return mixed
+     */
+    public function write($log, $level, $category)
+    {
+        // TODO: Implement write() method.
+    }
 }

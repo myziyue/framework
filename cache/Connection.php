@@ -9,7 +9,7 @@
 
 namespace ziyue\cache;
 
-use ziyue\core\Object;
+use ziyue\base\Object;
 
 class Connection extends Object
 {

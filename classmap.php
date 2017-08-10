@@ -8,15 +8,19 @@
  */
 
 return [
-    //cache
-    'ziyue\cache\Connection' => ZY_PATH . '/cache/Connection.php',
     // core
-    'ziyue\core\Application' => ZY_PATH . '/core/Application.php',
-    'ziyue\core\Exception' => ZY_PATH . '/core/Exception.php',
-    'ziyue\core\ErrorHandler' => ZY_PATH . '/core/ErrorHandler.php',
-    'ziyue\core\ExitException' => ZY_PATH . '/core/ExitException.php',
-    'ziyue\core\Object' => ZY_PATH . '/core/Object.php',
-    'ziyue\core\Components' => ZY_PATH . '/core/Components.php',
+    'ziyue\base\Application' => ZY_PATH . '/base/Application.php',
+    'ziyue\base\Exception' => ZY_PATH . '/base/Exception.php',
+    'ziyue\base\ErrorHandler' => ZY_PATH . '/base/ErrorHandler.php',
+    'ziyue\base\ExitException' => ZY_PATH . '/base/ExitException.php',
+    'ziyue\base\Object' => ZY_PATH . '/base/Object.php',
+    'ziyue\base\Components' => ZY_PATH . '/base/Components.php',
+    //cache
+    'ziyue\cache\adapter\DbCache' => ZY_PATH . '/cache/adapter/DbCache.php',
+    'ziyue\cache\adapter\FileCache' => ZY_PATH . '/cache/adapter/FileCache.php',
+    'ziyue\cache\adapter\RedisCache' => ZY_PATH . '/cache/adapter/RedisCache.php',
+    'ziyue\cache\Cache' => ZY_PATH . '/cache/Cache.php',
+    'ziyue\cache\Connection' => ZY_PATH . '/cache/Connection.php',
     //db
     'ziyue\db\Connection' => ZY_PATH . '/db/Connection.php',
     'ziyue\db\adapter\AbstractDb' => ZY_PATH . '/db/adapter/AbstractDb.php',
@@ -32,10 +36,11 @@ return [
     'ziyue\db\ext\mysql\SelectModel' => ZY_PATH . '/db/ext/mysql/SelectModel.php',
     'ziyue\db\ext\mysql\UpdateModel' => ZY_PATH . '/db/ext/mysql/UpdateModel.php',
     //log
+    'ziyue\log\adapter\DBLog' => ZY_PATH . '/cache/adapter/DBLog.php',
+    'ziyue\log\adapter\FileLog' => ZY_PATH . '/cache/adapter/FileLog.php',
+    'ziyue\log\adapter\RedisLog' => ZY_PATH . '/cache/adapter/RedisLog.php',
     'ziyue\log\Logger' => ZY_PATH . '/log/Logger.php',
-    'ziyue\log\drivers\DBLog' => ZY_PATH . '/log/drivers/DBLog.php',
-    'ziyue\log\drivers\FileLog' => ZY_PATH . '/log/drivers/FileLog.php',
-    'ziyue\log\drivers\RedisLog' => ZY_PATH . '/log/drivers/RedisLog.php',
+    'ziyue\log\Connection' => ZY_PATH . '/cache/Connection.php',
     //exception
     'ziyue\exception\InvalidCallException' => ZY_PATH . '/exception/InvalidCallException.php',
     'ziyue\exception\InvalidConfigException' => ZY_PATH . '/exception/InvalidConfigException.php',

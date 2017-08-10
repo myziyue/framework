@@ -9,16 +9,12 @@
 
 namespace ziyue\log;
 
-use ziyue\core\Object;
-use ziyue\exception\UnknownClassException;
-
-class Logger extends Object
+interface Logger
 {
     /*===== driver =====*/
     const DRIVER_FILE = 'File';
     const DRIVER_DB = 'DB';
     const DIRVER_REDIS = 'Redis';
-    public $driver = self::DRIVER_FILE;
 
     /*===== level =====*/
     const LEVEL_ERROR = 'Error';
@@ -32,21 +28,6 @@ class Logger extends Object
      * @param $log
      * @return mixed
      */
-    public function log($log, $level, $category){
-        $driverName = $this->getDriver();
-        $driver = new $driverName;
-        $driver->log($log, $level, $category);
-    }
+    public function write($log, $level, $category);
 
-    public function getDriver(){
-        $driverList = [
-            'File' => 'ziyue\log\drivers\FileLog',
-            'DB' => 'ziyue\log\drivers\DBLog',
-            'Redis' => 'ziyue\log\drivers\RedisLog',
-        ];
-        if(!isset($driverList[$this->driver])){
-            throw new UnknownClassException("Unable to find '$this->driver' . Namespace missing?");
-        }
-        return isset($driverList[$this->driver]) ? $driverList[$this->driver] : $driverList['File'];
-    }
 }

@@ -10,9 +10,9 @@
 
 namespace ziyue\web;
 
-use ziyue\core\ExitException;
+use ziyue\base\ExitException;
 
-class Application extends \ziyue\core\Application
+class Application extends \ziyue\base\Application
 {
 
     public $catchAllAllowIp = ['127.0.0.1'];

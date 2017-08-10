@@ -9,7 +9,7 @@
 
 namespace ziyue\exception;
 
-use ziyue\core\Exception;
+use ziyue\base\Exception;
 
 class UnknownClassException extends Exception
 {

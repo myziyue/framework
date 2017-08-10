@@ -9,7 +9,7 @@
 
 namespace ziyue\db\adapter;
 
-use ziyue\core\Object;
+use ziyue\base\Object;
 
 abstract class Adapter extends Object
 {

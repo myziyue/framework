@@ -9,7 +9,7 @@
  */
 namespace ziyue\db;
 
-use ziyue\core\Object;
+use ziyue\base\Object;
 use ziyue\exception\InvalidConfigException;
 
 class Connection extends Object

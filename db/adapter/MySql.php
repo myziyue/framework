@@ -9,7 +9,7 @@
 
 namespace ziyue\db\adapter;
 
-use ziyue\core\ErrorException;
+use ziyue\base\ErrorException;
 use ziyue\exception\InvalidConfigException;
 
 class MySql extends Adapter
