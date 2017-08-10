@@ -7,7 +7,7 @@
  * @since 1.0
  */
 
-namespace ziyue\log\drivers;
+namespace ziyue\log\adapter;
 
 use ziyue\log\Logger;
 
