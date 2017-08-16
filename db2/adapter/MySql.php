@@ -3,40 +3,98 @@
  * Created by PhpStorm.
  *
  * @author Bi Zhiming <evan2884@gmail.com>
- * @created 2017/3/8  上午11:41
+ * @created 2017/8/16  上午11:35
  * @since 1.0
  */
 
 namespace ziyue\db\adapter;
 
-use ziyue\base\ErrorException;
+use ziyue\db\Db;
+use ziyue\exception\DatabaseException;
 use ziyue\exception\InvalidConfigException;
 
-class MySql extends Adapter
+class MySql implements Db
 {
+    /**
+     * @var null 主库实例化对象
+     */
     private static $instranceMaster = null;
+    /**
+     * @var null 从库实例化对象
+     */
     private static $instranceSlaver = null;
+    /**
+     * @var null PDO
+     */
     private $dsn = null;
+    /**
+     * @var string 账号
+     */
     private $user = 'root';
+    /**
+     * @var string 密码
+     */
     private $password = '';
+    /**
+     * @var string 编码
+     */
     private $charset = 'utf-8';
-    private $pdoParams = ['host', 'port', 'user', 'password', 'dbName', 'charset'];
-    public $tblPrefix = '';
+    /**
+     * @var string 表前缀
+     */
+    private $tblPrefix = '';
+    /**
+     * @var array 主库配置信息
+     */
     public $master = [];
+    /**
+     * @var bool 是否启用从库
+     */
     public $enableSlaves = false;
+    /**
+     * @var array 从库配置信息
+     */
     public $slaves = [];
 
+    /**
+     * 获取主库实例化对象
+     * @return null
+     */
     public function getMaster()
     {
-        if (self::$instranceMaster == null) {
-            $this->getPdoParams($this->master);
+        if(static::$instranceMaster == null) {
+            $this->setDSNInfo($this->master);
             self::$instranceMaster = new \PDO($this->dsn, $this->user, $this->password);
             self::$instranceMaster->exec('SET character_set_connection=' . $this->charset . ', character_set_results=' . $this->charset . ', character_set_client=binary');
         }
+        return static::$instranceMaster;
     }
 
-    private function getPdoParams($pdoParams)
+    /**
+     * 获取从库实例化对象
+     * @return null
+     */
+    public function getSlavers($slaveDbId = 0)
     {
+        if($this->enableSlaves == false) {
+            throw new InvalidConfigException("'enableSlaves' is false.");
+        }
+        if(static::$instranceSlaver == null) {
+            if($slaveDbId == 0) {
+                $slaveDbId = rand(1, sizeof($this->slaves)) - 1;
+            }
+            $this->setDSNInfo($this->slaves[$slaveDbId]);
+            self::$instranceMaster->exec('SET character_set_connection=' . $this->charset . ', character_set_results=' . $this->charset . ', character_set_client=binary');
+        }
+        return static::$instranceSlaver;
+    }
+
+    /**
+     * 配置数据库连接信息
+     * @param $pdoParams
+     * @throws InvalidConfigException
+     */
+    private function setDSNInfo($pdoParams){
         if (isset($pdoParams['tblPrefix'])) {
             $this->tblPrefix = trim($pdoParams['tblPrefix']);
             unset($pdoParams['tblPrefix']);
@@ -48,21 +106,6 @@ class MySql extends Adapter
         $this->user = $pdoParams['user'];
         $this->password = $pdoParams['password'];
         $this->charset = $pdoParams['charset'];
-    }
-
-    public function getSlaves($slaveDbId = 0)
-    {
-        if (self::$instranceSlaver == null) {
-            $slaveDbId = $slaveDbId == 0 ? rand(1, sizeof($this->slaves)) : $slaveDbId;
-            $this->getPdoParams($this->slaves[$slaveDbId - 1]);
-            self::$instranceSlaver = new \PDO($this->dsn, $this->user, $this->password);
-            self::$instranceSlaver->exec('SET character_set_connection=' . $this->charset . ', character_set_results=' . $this->charset . ', character_set_client=binary');
-        }
-    }
-
-    public function getSlaveNum()
-    {
-        return sizeof($this->slaves);
     }
 
     public function query($sql, Array $bind = [])
@@ -80,7 +123,7 @@ class MySql extends Adapter
 
         // exception
         if ('00000' !== $prepare->errorCode()) {
-            throw new ErrorException("SQL error : $sql ." . $prepare->errorInfo()[2]);
+            throw new DatabaseException("SQL error : $sql ." . $prepare->errorInfo()[2]);
         }
 
         if ($this->getSqlType($sql) == 'select') {
@@ -96,15 +139,14 @@ class MySql extends Adapter
         return $result;
     }
 
-    private function getSqlType($sql)
-    {
+    private function getSqlType($sql) {
         if (0 === strpos(strtolower($sql), 'select')) {
             return 'select';
         }
         if (0 === strpos(strtolower($sql), 'update')) {
             return 'update';
         }
-        if (0 === strpos(strtolower($sql), 'insert')) {
+        if (0 === strpos(strtolower($sql), 'insert') || 0 === strpos(strtolower($sql), 'replace')) {
             return 'insert';
         }
     }
